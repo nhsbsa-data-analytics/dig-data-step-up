@@ -6,15 +6,19 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "C:/Users/ADNSH/OneDrive - NHS Business Services Authority/GitHub/dig-data-step-up")
+if (!requireNamespace("rprojroot", quietly = TRUE)) {install.packages("rprojroot")}
+knitr::opts_knit$set(root.dir = find_root(criterion = is_rstudio_project))
 ```
 
 ## Introduction to R
 
 Welcome to the Dig Data Step-up Challenge!
 
-In this 
+In this session we will:
+
+- learn the basics of R Studio
+- learn some simple Base R functions
+- become more familiarised with the dataset in the challenge
 
 ## Why Use R?
 
@@ -39,7 +43,7 @@ You can run a cell by clicking on the green arrow to the right hand side of a ce
 
 The below code will print some text into the bottom-left pane of R Studio.
 
-```{r cars}
+```{r}
 print("Welcome to the R Step-up Challenge!")
 ```
 
@@ -69,7 +73,7 @@ Think of your computer like a giant digital filing cabinet with lots of drawers 
 In R Studio, getwd() is like asking, "Which drawer and folder am I currently working in?"
 We can do this now.
 
-```{r cars}
+```{r}
 getwd()
 ```
 
@@ -91,7 +95,7 @@ If we want to read this data and save it as an object within our environment pan
 We must spell the file correctly (all code and objects are case-sensitive in R) and assign it a name (in this instance just 'data').
 
 ```{r}
-data = readRDS("STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+#data = readRDS("STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 ```
 
 So, the above does not work, because we haven't specified the folder to load the data from.
