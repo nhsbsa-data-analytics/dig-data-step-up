@@ -5,12 +5,12 @@ date: "2025-02-05"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo=TRUE, eval=TRUE}
 if (!requireNamespace("rprojroot", quietly = TRUE)) {install.packages("rprojroot")}
 knitr::opts_knit$set(root.dir = find_root(criterion = is_rstudio_project))
 ```
 
-## Introduction to R
+# Introduction
 
 Welcome to the Dig Data Step-up Challenge!
 
@@ -95,7 +95,7 @@ If we want to read this data and save it as an object within our environment pan
 We must spell the file correctly (all code and objects are case-sensitive in R) and assign it a name (in this instance just 'data').
 
 ```{r}
-#data = readRDS("STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+data = readRDS("STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 ```
 
 So, the above does not work, because we haven't specified the folder to load the data from.
@@ -137,9 +137,10 @@ This is a monthly dataset that describes how many medicines were prescribed acro
 This is 'real data', so actually describes real anti-depressant prescribing in England.
 We have merged, simplified and filtered all these monthly files into a single dataset.
 
-This dataset now contains 5 columns:
+This dataset now contains 6 columns:
 
 *YM*: The year and month, in the format YYYYMM, where 202401 is the same as January 2024. There are 46 year-month values in the data.
+*YEAR*: The year in the format YYYY. There are 4 years-worth of prescribing information in the dataset.
 *REGION*: The NHS Region. There are 7 regions in the data.
 *DRUG*: The name of the anti-depressant medicine. There are 32 of these in the data.
 *ITEMS*: How many items were prescribed.
@@ -226,16 +227,13 @@ Finally, is:
 
 - how to check the number of columns in a dataframe
 - how to check the number of rows in a dataframe
-- howw to check the number of levels in a factor type column
+- how to check the number of levels in a factor type column
 
 ```{r}
 ncol(data)
 nrow(data)
 nlevels(data$YM)
-```
-
-```{r}
-nlevels(data$YM)
+nlevels(data$YEAR)
 ```
 
 ## Summary

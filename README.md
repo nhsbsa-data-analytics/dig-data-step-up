@@ -45,6 +45,8 @@ Functions:
 - ungroup()
 - sum()
 - n_distinct()
+- arrange()
+- top_n()
 
 Content:
 
@@ -55,6 +57,7 @@ Content:
 - Logical operators (== and !=)
 - Basic dplyr transformations
 - Basic dplyr aggregations
+- Basic dplyr sorting
 
 
 3. Visualising Data

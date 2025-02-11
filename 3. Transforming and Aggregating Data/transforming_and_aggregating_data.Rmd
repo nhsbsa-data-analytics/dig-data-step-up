@@ -5,13 +5,12 @@ date: "2025-02-06"
 output: html_document
 ---
 
-
-```{r setup, include=FALSE}
+```{r setup, echo=TRUE, eval=TRUE}
 if (!requireNamespace("rprojroot", quietly = TRUE)) {install.packages("rprojroot")}
 knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
 ```
 
-## Introduction data
+# Introduction
 
 In the previous markdown file we had a first look at our monthly and regional anti-depressant prescribing data.
 We can load it now and quickly check again it's structure how many rows it had.
@@ -292,7 +291,7 @@ df_region_ym = data %>%
   ungroup()
 ```
 
-The final thing we will now do is count the numbr of unique anti-depressants prescrobed per region per month.
+The final aggregation we will now do is count the number of unique anti-depressants prescribed per region per month.
 We can do this using *n_distinct* within the *summarise*.
 For clarity, to compare with the 'normal' *distinct* function:
 
@@ -306,6 +305,49 @@ df_region_ym = data %>%
   group_by(REGION, YM) %>% 
   summarise(ITEMS = sum(ITEMS), COST = sum(COST), N_DRUGS = n_distinct(DRUG)) %>% 
   ungroup()
+```
+
+## Sorting Data
+
+In addition to transforming (changing the shape/structure) of data, and aggregating data, another thing we might want to do is sort data.
+This could be putting a column into ascending or descending order, or taking the top values from a column.
+
+We can sort numerical values using the *arrange* function.
+This time, we will only group by REGION, and only sum the ITEMS column.
+We will then sort the above data by the ITEMS column.
+View the object in the global environment of *arrange*.
+
+```{r}
+df_region = data %>% 
+  group_by(REGION) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  arrange(ITEMS)
+```
+
+As we can see, the values are sorted from smallest to biggest.
+The below code would sort from biggest to smallest (descending in value).
+
+```{r}
+df_region = data %>% 
+  group_by(REGION) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  arrange(desc(ITEMS))
+```
+
+And finally, we can select the top number of rows by a given column, using *top_n*.
+The below code identifies and retains the 3 regions with the greatest total item count.
+We are then sorting the remaining 3 records in descending order by their ITEMS value.
+The *top_n* and *arrange* functions could be run in either order and the same result would be achieved.
+
+```{r}
+df_region_top = data %>% 
+  group_by(REGION) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  top_n(3, ITEMS) %>% 
+  arrange(desc(ITEMS))
 ```
 
 ## Summary
@@ -323,6 +365,8 @@ Below is a list of the functions introduced in this section:
 - ungroup()
 - sum()
 - n_distinct()
+- arrange()
+- top_n()
 
 ## Exercise
 
