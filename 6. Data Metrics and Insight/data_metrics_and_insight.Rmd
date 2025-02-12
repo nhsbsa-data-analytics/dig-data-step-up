@@ -5,19 +5,105 @@ date: "2025-02-12"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, echo=TRUE, eval=TRUE}
+if (!requireNamespace("rprojroot", quietly = TRUE)) {install.packages("rprojroot")}
+knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
 ```
 
-## R Markdown
+# Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In this section we will start generating prescribing-related metrics.
+So far we have just reported on data, and well done if you have made it this far.
+Because regions are different sizes with different quantities of prescribing, it is hard to compare their prescribing meaningfully.
+Metric generation will open up this new area of insight.
+We will first load our key packages.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+library(dplyr)
+library(highcharter)
 ```
+
+## Data
+
+In the extension work, which is this session plus the next exercise, we will use a new dataset.
+This is an expanded version of the original data we were using.
+
+```{r}
+data = readRDS("Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+```
+
+The following aggregation 'reduces' this data down the size of original dataset.
+
+```{r}
+b = df %>% 
+  filter(BNF_SECTION == "Antidepressant drugs") %>% 
+  group_by(
+    YM,
+    YEAR,
+    REGION,
+    DRUG
+  ) %>% 
+  summarise(
+    ITEMS = sum(ITEMS),
+    COST = sum(COST)
+  ) %>% 
+  ungroup()
+```
+
+
+```{r}
+levels(df$YM)
+```
+
+
+```{r}
+data = read.csv("Data/DIG_DATA_EPD.csv")
+bnf = read.csv("Data/BNF_LOOKUP.csv")
+```
+
+
+```{r}
+df = data %>%
+  inner_join(bnf) %>% 
+  filter(YEAR_MONTH >= 202101) %>% 
+  mutate(YEAR = substr(YEAR_MONTH,1,4)) %>% 
+  transmute(
+    YM = factor(YEAR_MONTH),
+    YEAR = factor(YEAR),
+    REGION = REGIONAL_OFFICE_NAME,
+    BNF_CHAPTER = BNF_CHAPTER_PLUS_CODE,
+    BNF_SECTION = SECTION_DESCR,
+    DRUG = CHEMICAL_SUBSTANCE_BNF_DESCR,
+    ITEMS = ITEMS,
+    COST = NIC
+  ) %>% 
+  filter(REGION != "UNIDENTIFIED")
+  
+```
+
+```{r}
+
+a %>% 
+  inner_join(
+    b %>% 
+      select(YM, REGION, DRUG)
+  )
+
+```
+
+```{r}
+b %>% 
+  anti_join(
+    a %>% 
+      select(YM, REGION, DRUG)
+  )
+```
+
+
+```{r}
+saveRDS(data, "Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+```
+
 
 ## Including Plots
 
