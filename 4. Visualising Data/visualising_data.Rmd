@@ -31,6 +31,12 @@ library(dplyr)
 library(scales)
 ```
 
+And load in the same dataset using *readRDS*.
+
+```{r}
+data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+```
+
 ## Overview
 
 Here is how R describes the ggplot2 package: 
@@ -198,10 +204,6 @@ This chart now looks okay, so we can save it if we want.
 We can save a ggplot chart as a jpeg using *ggsave*.
 We need to specify 3 things:
 
-```{r}
-getwd()
-```
-
 1. What folder to save the chart in, plus a name for the chart
 2. The name of the actual R object
 3. Define the chart output type (jpeg, pdf, etc)
@@ -252,7 +254,7 @@ df_bar_two = data %>%
   arrange(ITEMS)
 ```
 
-## Create a Basic Chart
+## Example 2: Basic Chart
 
 Once again, I need 3 things to create my basic chart:
 
@@ -268,9 +270,9 @@ ggplot(df_bar_two, aes(REGION, ITEMS)) +
   geom_col()
 ```
 
-## Refine this Chart
+## Example 2 : Refine Chart
 
-This is a start, although the chart needs some work, the following steps would make it look nicer.
+This is a start, although the chart needs some work, the following steps would improve the chart.
 
 1. Change the numerical values on the y-axis to non-standard form
 2. Arrange the values displayed in the bars in either ascending or descending order
@@ -325,6 +327,21 @@ ggplot(df_bar_two, aes(reorder(REGION, ITEMS), ITEMS)) +
   coord_flip()
 ```
 
+The result of the *coord_flip* means the chart title is now outside the chart area.
+We can use a line break */n* so break the title up on 2 lines.
+
+```{r}
+ggplot(df_bar_two, aes(reorder(REGION, ITEMS), ITEMS)) +
+  geom_col() +
+  scale_y_continuous(labels = label_comma()) +
+  labs(
+    x = "Region name",
+    y = "Total number of items",
+    title = "The number of sertraline hydrochloride items prescribed \n per region in 2024"
+  ) +
+  coord_flip()
+```
+
 And finally, we can colour the bars and add a theme.
 
 ```{r}
@@ -334,13 +351,15 @@ ggplot(df_bar_two, aes(reorder(REGION, ITEMS), ITEMS)) +
   labs(
     x = "Region name",
     y = "Total number of items",
-    title = "The number of sertraline hydrochloride items prescribed per region in 2024"
+    title = "The number of sertraline hydrochloride items prescribed \n per region in 2024"
   ) +
   coord_flip()+
   theme_classic()
 ```
 
-We can then assign the ouptut from this completed chart into an object.
+# Example 2: Save Chart
+
+We can then assign the output from this completed chart into an object.
 
 ```{r}
 plot_two = ggplot(df_bar_two, aes(reorder(REGION, ITEMS), ITEMS)) +
@@ -349,7 +368,7 @@ plot_two = ggplot(df_bar_two, aes(reorder(REGION, ITEMS), ITEMS)) +
   labs(
     x = "Region name",
     y = "Total number of items",
-    title = "The number of sertraline hydrochloride items prescribed per region in 2024"
+    title = "The number of sertraline hydrochloride items prescribed \n per region in 2024"
   ) +
   coord_flip()+
   theme_classic()
@@ -362,39 +381,206 @@ Not forgetting to specify *both* the folder location and file name.
 ggsave("Output/example_chart_two.jpeg", plot = plot_two, device = "jpeg")
 ```
 
+## Example 3: Aggregate Data
+
+For the final example, I want to create a line chart, that shows the monthly cost of all anti-depressant prescribing in London, for the entire tie period.
+This is going to be a single value per month, so the aggregated data should have the same number of rows as the number of months in the data. 
+To generate this data, I would have to do the following aggregation:
+
+1. Filter the REGION to London
+2. Group by YM
+4. Summarise and sum by COST
+5. Ungroup
+
+The code would look like this:
+
+```{r}
+df_line = data %>% 
+  filter(REGION == "LONDON") %>% 
+  group_by(YM) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup()
+```
+
+## Example 3: Basic Chart
+
+Once again, I need 3 things to create my basic chart:
+
+1. The data (df_line)
+2. The Chart aesthetic (YM, COST)
+3. The chart type (+ geom_point() + geom_line())
+
+I want to use the df_line object, and I want to create a line chart where the x-axis is the year-month, and the y-axis is the prescribing cost.
+I have to specify that I want both lines and points in the chart, you could just have one of them if you wanted.
+The following code would do this.
+
+```{r}
+ggplot(df_line, aes(YM, COST)) +
+  geom_point() +
+  geom_line()
+```
+
+## Example 3: Refine Chart
+
+This is a start, although the chart, once again, needs some work, the following steps would make it more a more useful chart.
+
+1. Firstly, connect the points with a line! And also add a theme.
+2. Add labels and a title
+3. Adjust the angles of the x-axis labels.
+4. Add thousand separators to the y-axis 
+5. Adjust the minimum y-axis value.
+
+These will be done one at a time, first connecting the points with a line.
+This is simple, but again might seem a bit strange at first.
+The *group=1* parameter explicitly tells ggplot to treat all points as one connected group.
 
 
+```{r}
+ggplot(df_line, aes(YM, COST, group = 1)) +
+  geom_point()+
+  geom_line()+
+  theme_classic()
+```
+
+We can add axis label and a title.
+
+```{r}
+ggplot(df_line, aes(YM, COST, group = 1)) +
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  labs(
+    x = "Year month",
+    y = "Total prescribing cost",
+    title = "The total anti-depressant prescribing cost per month in London"
+  )
+```
+
+We can now adjust the x-axis labels, so they are vertically aligned, so they don't overlap.
+This uses both the *theme* and *element_text* functions. 
+
+```{r}
+ggplot(df_line, aes(YM, COST, group = 1)) +
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  labs(
+    x = "Year month",
+    y = "Total prescribing cost",
+    title = "The total anti-depressant prescribing cost per month in London"
+  ) +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+We can now add thousand separators.
+
+```{r}
+ggplot(df_line, aes(YM, COST, group = 1)) +
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  labs(
+    x = "Year month",
+    y = "Total prescribing cost",
+    title = "The total anti-depressant prescribing cost per month in London"
+  ) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_y_continuous(labels = label_comma())
+```
+
+We can now colour the actual line.
+Note, we do not use *fill* as the line isn't a container to be filed.
+Both the line and point colour need to be specified.
+They could even be coloured differently if you wanted.
+
+```{r}
+ggplot(df_line, aes(YM, COST, group = 1)) +
+  geom_point(color = "darkblue")+
+  geom_line(color = "darkblue")
+  theme_classic()+
+  labs(
+    x = "Year month",
+    y = "Total prescribing cost",
+    title = "The total anti-depressant prescribing cost per month in London"
+  ) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_y_continuous(labels = label_comma())
+```
+
+Next, we make the y-axis values start at zero.
+
+The second value is *NA*, meaning we are not specifying an upper limit.
+We need to put this within the *scale_y_continuous* function.
+The lower and upper limits we want need to be 2 values inside the limits parameter. 
+
+```{r}
+ggplot(df_line, aes(YM, COST, group = 1)) +
+  geom_point(color = "darkblue")+
+  geom_line(color = "darkblue")+
+  theme_classic()+
+  labs(
+    x = "Year month",
+    y = "Total prescribing cost",
+    title = "The total anti-depressant prescribing cost per month in London"
+  ) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_y_continuous(labels = label_comma(), limits = c(0,NA)) 
+```
+
+## Example 3: Save Chart
+
+We can save assign the output from this chart type into an object.
+
+```{r}
+plot_three = ggplot(df_line, aes(YM, COST, group = 1)) +
+  geom_point(color = "darkblue")+
+  geom_line(color = "darkblue")+
+  theme_classic()+
+  labs(
+    x = "Year month",
+    y = "Total prescribing cost",
+    title = "The total anti-depressant prescribing cost per month in London"
+  ) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_y_continuous(labels = label_comma(), limits = c(0,NA)) 
+```
+
+And then once again save this as a jpeg.
+Not forgetting to specify *both* the folder location and file name.
+
+```{r}
+ggsave("Output/example_chart_three.jpeg", plot = plot_three, device = "jpeg")
+```
 
 
+## Summary
 
+Visualising data is a key daya analytics and data science skill.
+It starts with aggregating data, in a way that it is appropriately formatted for the type of chart you want.
+It's then a case of firstly creating a base plot.
+After that, it's about refining the plot appearance and format.
 
+These are all the ggplot-rellated functions we have used in this session.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- ggplot()
+- geom_col()
+- geom_point()
+- geom_line()
+- scale_y_continuous()
+- label_comma()
+- ylim()
+- labs()
 - coord_flip()
 - reorder()
+- theme()
+- theme_classic()
+- element_text()
+- ggsave()
 
+## Exercise
 
-
-
-
-
-
-
+Now try the exercise within the Visualising Data folder.
+This is found within the 'visualising_data_exercise.r' script.
+This is a 'regular' R script rather than a markdown document.
+Write your code to answer each question within the script.
 
