@@ -50,7 +50,7 @@ b = readRDS("Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 
 # check number of differing rows after aggregation
 setdiff(
-  b %>% 
+  x = b %>% 
     filter(BNF_SECTION == "Antidepressant drugs") %>% 
     group_by(
       YM,
@@ -63,7 +63,7 @@ setdiff(
       COST = sum(COST)
     ) %>% 
     ungroup(),
-  a
+  y = a
 )
 
 # check structures
