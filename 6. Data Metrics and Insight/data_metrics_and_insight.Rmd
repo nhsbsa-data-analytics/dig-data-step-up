@@ -16,7 +16,7 @@ In this section we will start generating prescribing-related metrics.
 So far we have just reported on data, and well done if you have made it this far.
 Because regions are different sizes with different quantities of prescribing, it is hard to compare their prescribing meaningfully.
 Metric generation will open up this new area of insight.
-We will first load our key packages.
+We will first load our required packages.
 
 ```{r}
 library(dplyr)
@@ -44,7 +44,7 @@ original_data = data %>%
 So we can see that the original data differs in a few ways:
 
 - It only contains antidepressant drugs
-- It doesn't conatin BNF Chapter and Section information
+- It doesn't contain BNF Chapter and BNF Section information
 
 The BNF stands for the *British National Formulary*.
 The BNF is structured hierarchically into Chapters, Sections and Chemical Substances (Drugs).
@@ -60,10 +60,10 @@ For example:
 ## Exploratory Data Analysis (EDA)
 
 EDA is a technique where you explore a dataset, in order to better understand it.
-Data visualisation is an effective way to do basic EDA.
+Data visualisation can be an effective way to do basic EDA.
 Using the skills and techniques we can create a few charts to do this high-level exploration.
 
-First, we can see the total prescribing per chapter within a single year.
+First, we can see the total prescribing per BNF chapter within a single year.
 We can see that the Central Nervous System (CNS) chapter had the 2nd most amount of prescribing, which contains the antidepressant section.
 We can also see that some BNF chapters have (comparatively) very little prescribing.
 
@@ -93,7 +93,7 @@ data %>%
 
 Finally, for context, we can use a line chart to see the monthly volume of national prescribing (for all chapters).
 We do not need to filter by year as we want all months included.
-We will set the y-axis minimum value to zero to get a better sense of scale.
+We could (optional) set the y-axis minimum value to zero to get a better sense of changing prescribing volumes..
 
 ```{r}
 data %>% 
@@ -107,7 +107,7 @@ data %>%
 ## Metric Generation
 
 In order to go beyond tallying numbers and recording data, we need to think how to meaningfully compare data.
-For example, the below chart shows the antidepressant section prescribing volume for each region across the whole timeframe.
+For example, the below chart shows the monthly antidepressant section prescribing volume for each region across the whole timeframe.
 
 ```{r}
 data %>% 
@@ -118,7 +118,6 @@ data %>%
   hchart("line", hcaes(YM, ITEMS, group = REGION)) %>% 
   hc_yAxis(min = 0)
 ```
-
 
 Now, someone might say from this data:
 
@@ -131,8 +130,8 @@ Which would be factually true, but this doesn't take a lot of things into accoun
 - The total prescribing volume in each region
 - Other factors, such as the deprivation profile of each region
 
-To overcome this, we can create a metric that *standardise* these values.
-This means the the metrics have a common scale enabling to be compared meaningfully.
+To overcome this, we can create a metric that *standardises* these values.
+This means the the metrics have a common scale enabling them to be compared meaningfully.
 The following metric would do this:
 
 - What *percentage* of prescribing per month in each region is for antidepressants
@@ -146,7 +145,7 @@ To calculate this, we would need to do the following:
 ## Creating new Features (mutate)
 
 To create new features (i.e. a column or variable) within a datatset we need to use *mutate*.
-Mutate is one of the most R functions you will come across.
+Mutate is one of the most important R functions you will come across.
 This either creates a new variables, or 'overwrites' an old variable.
 
 For example, the below is creating a new variable called COST2, which is the COST column multiplied by 2.
@@ -158,7 +157,7 @@ data %>%
   mutate(COST2 = COST * 2)
 ```
 
-The below code is doing the same, but this giving not changing the column name.
+The below code is doing the same, but this time not changing the column name.
 In this instance, the multiplied value will replace the initial value.
 We use the * symbol to multiply values or columns.
 
@@ -185,7 +184,7 @@ An ifelse works in the following way:
 3. If this is false then do something else
 
 We will also introduce 2 new logical operators.
-Previously we saw
+Previously we saw:
 
 - equals to *==*
 - not equals to *!=*
@@ -214,17 +213,37 @@ data %>%
 
 The output to an ifelse is only ever 2 things, A or B.
 If you need conditional logic with 2 or more conditions, you can use something (in R) called a *case_when*.
-We will not cover this, but feel free to look it up if you are curious.
-You can check the R documentation that accompanies a function by doing the following:
+We will only cover this briefly, but for more information check the R documentation.
+You can do this for any R function by doing the following:
 
 ```{r}
 ?case_when
 ```
 
-We could use the same conditional logic, but have the resulting column formatted differently.
-For example, the below:
+The below code generates the same output as the previous ifelse.
+In a case statement each condition is explicitly specified (rather than if-its-not-this-then-that as found in ifelse).
 
-1. Check if the (regional, monthly and drug-level) item count is less than 1000
+The syntax also differs slightly.
+It is easy to mix-up syntax when switching between different functions that do similar things.
+
+This is an example how in programming there are multiple ways of achieving the same thing.
+We will only ever be using conditional logic with 2 conditions, but use case_when if you find it more intuitive or easy to use.
+
+```{r}
+data %>% 
+  select(YM, REGION, DRUG, ITEMS) %>% 
+  mutate(
+    VOLUME = case_when(
+      ITEMS < 1000 ~ "LOW",
+      ITEMS >= 100 ~ "HIGH"
+      )
+    ) 
+```
+
+So, using ifelse again, we could use the same conditional logic, but have the resulting column formatted differently.
+For example, the below code does the following:
+
+1. Check if the (regional, monthly and drug-level) item count value in each row is less than 1000
 2. If it less than 1000, generate a value of 0, and populate the ITEMS_NEW column with this value 
 3. If it equal or more than 100, take whatever value is currently in the ITEMS column, and populate the ITEMS_NEW column with this value 
 
@@ -256,7 +275,7 @@ data %>%
 
 ## Metric Generation using Conditional Logic
 
-The above ifelse may not seen that useful, but we can actually use to to calculate the earlier specified proposed metric, which was:
+The above ifelse may not seen that useful, but we can actually use it to calculate the earlier specified proposed metric, which was:
 
 - What *percentage* of prescribing per month in each region is for antidepressants
 
@@ -282,6 +301,7 @@ ad_pct = data %>%
 We then use mutate again to divide these columns, to create a percentage (as a decimal).
 We can call this new column whatever we want, but will go for AD_PCT (antidepressant percent).
 The */* operator is used to divide, and we need to divide AD_ITEMS by total ITEMS.
+This requires another mutate, as we are creating a new column.
 
 ```{r}
 ad_pct = data %>% 
@@ -311,13 +331,12 @@ ad_pct = data %>%
 ```
 
 Finally, we can visualise this monthly percentage value by region.
-Because we have multiple groups, we nee to specify *group = REGION*.
+Because we have multiple groups, we need to specify *group = REGION*.
 In this instance, we might want to *not* set the y-axis minimum value to zero, so that the regional trend lines can be better differentiated.
 
-So, from this standardised data we can see that out of all prescribing, London routinely had the lowest percentage of monthly antidepressant prescribing (out of all prescribing).
+So, from this standardised data we can see that London consistently had the lowest percentage of monthly antidepressant prescribing (out of all prescribing).
 There could be a huge number of reasons why this is the case (such as other medicines being in more demand) so we wouldn't be able to jump any conclusions here.
 Nevertheless, this is an interesting chart, with the London trend line being notably different to others.
-
 
 ```{r}
 hchart(ad_pct, "line", hcaes(YM, AD_PCT, group = REGION)) %>% 
@@ -326,11 +345,10 @@ hchart(ad_pct, "line", hcaes(YM, AD_PCT, group = REGION)) %>%
   hc_title(text = "The monthly percentage of antidepressant prescribing, out of all prescribing, per region from 202301 until 202412")
 ```
 
-Finally, we will create a diferent using the same conditional logic, although a diferent group_by.
+Finally, we will create a different chart using the same conditional logic, although using a different group_by.
 This will look at the percentage of antidepressant prescribing per region, just in 2023 (so ending up with 1 value per region).
 To do this, we need to remove YM from the group_by.
 We will assign this to a new object so we can inspect it.
-
 
 ```{r}
 ad_pct_year = data %>% 
@@ -381,10 +399,10 @@ hchart(ad_pct_year, "bar", hcaes(REGION, AD_PCT)) %>%
 
 We can generate some basic summary statistics, about the distribution of values within a dataset, using the following functions:
 
-- min() = minimum mvalue
+- min() = minimum value
 - max() = maximum value
 - median() = middle value within an ordered dataset
-- mean() = the 'average' value (all values added together and divided by number of values)
+- mean() = the 'average' value (all values added together and divided by the number of values)
 - quantile(0.25) = lower quartile (Also known as the 25th percentile, the value below which 25% of the data falls)
 - quartile(0.75) = upper quartile (Also known as the 75th percentile, the value below which 75% of the data falls)
 
@@ -441,10 +459,10 @@ This is *hcboxplot* rather than *hchart* (technically this is a deprecated funct
 We just need to specify the following:
 
 - The numerical column we are interetsed
-- Our grouping variaable (optional)
+- Our grouping variable (optional)
 
 One caveat, is that highcharter automatically identifies outliers and does not include them in the boxplot whisker 'minimum'.
-To calculate the actual minimum, use the numerical method above.
+To calculate the actual minimum, use the previous numerical method.
 
 We will first create a boxplot for our *ad_pct_year* object.
 There is no grouping variable here.
@@ -460,7 +478,7 @@ hcboxplot(x = ad_pct_year$AD_PCT) %>%
    hc_yAxis(title = list(text = "Percentage of antidepressant prescribing (%)"))
 ```
 
-The above boxplot becomes far more informative interpretable if we add a grouping variable.
+The above boxplot becomes more informative if we add a grouping variable.
 Again, in practice, you might want to focus only on a calendar (or financial) years-worth of data, unless there was a reason to focus on 4 years-worth of monthly values.
 
 ```{r, warning = FALSE}
@@ -471,10 +489,10 @@ hcboxplot(x = ad_pct$AD_PCT, var = ad_pct$REGION) %>%
 
 ## Summary
 
-We haven't introduced many new function, but *mutate* and *ifelse* are both incredibly powerful and versatile.
+We haven't introduced many new functions, but *mutate* and *ifelse* are both incredibly powerful and versatile.
 You can complete a lot of useful tasks just using these, such as creating standardised prescribing metrics.
 
-And we calculate a variety of summary statistics, either with or without a group_by, using *min*, *max*, *mean*, *median* and *quartile*.
+And we can calculate a variety of summary statistics, either with or without a group_by, using *min*, *max*, *mean*, *median* and *quartile*.
 And the *hcboxplot* functions is a really easy way to visualise these summary statistics.
 
 All the new functions and logical operators from this sessions are listed below.
