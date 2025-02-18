@@ -1,6 +1,11 @@
 
-# Library
-library(dplyr)
+# Check if pacman not already installed, if not install
+if(!'pacman' %in% rownames(installed.packages())){
+  install.packages('pacman')
+}
+
+# Load required packages
+pacman::p_load('dplyr')
 
 # Bnf data
 bnf = read.csv("Data/BNF_LOOKUP.csv")
