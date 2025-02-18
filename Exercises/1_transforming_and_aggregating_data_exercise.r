@@ -15,8 +15,7 @@ data %>%
   top_n(10, ITEMS) %>% 
   arrange(desc(ITEMS))
 
-# Question 2: Calculate how monthly national cost of Mirtazapine prescribing 
-
+# Question 2: Calculate the monthly national cost of Mirtazapine prescribing 
 data %>% 
   filter(DRUG == "Mirtazapine") %>% 
   group_by(YM) %>% 

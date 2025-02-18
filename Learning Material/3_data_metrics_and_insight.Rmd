@@ -17,20 +17,6 @@ So far we have just reported on data, and well done if you have made it this far
 Because regions are different sizes with different quantities of prescribing, it is hard to compare their prescribing meaningfully.
 Metric generation will open up this new area of insight.
 
-We need to install one extra package, even though we only require one function (pivot_wider)from it in this session
-It's called *tidyr* and used for data transformation and maniupation.
-Here is a cheatsheet if you want to see what other functions it has. 
-
-```{r}
-browseURL("https://rstudio.github.io/cheatsheets/tidyr.pdf")
-```
-
-We can install it now.
-
-```{r}
-install.packages("tidyr")
-```
-
 We will first load our three required packages.
 
 ```{r}
@@ -503,40 +489,6 @@ hcboxplot(x = ad_pct$AD_PCT, var = ad_pct$REGION) %>%
   hc_yAxis(title = list(text = "Percentage of antidepressant prescribing (%)"))
 ```
 
-## Pivoting Data
-
-The final thing we will look at is how to pivot data, this help with presenting data more effectively, rather than generating new insight.
-First lets use a group_by and summarise our data, to the annual sum of items per region, so group_by YEAR and REGION and sum ITEMS.
-
-```{r}
-data %>% 
-  group_by(YEAR, REGION) %>% 
-  summarise(ITEMS = sum(ITEMS)) %>% 
-  ungroup()
-```
-
-We want our data formatted like this if we want to plot our data.
-However, if we want to present this as a table in a report, we would want to pivot or 'spread' the values out.
-The tidyr *pivot_wider* function can do this.
-
-We just need to specify 2 things:
-
-- The column with the categories or names we want to become their own column (REGION, so each region name is a new column)
-- The values we want these new columns populated with (ITEMS)
-
-The 2 parameters we need to specify are (conveniently) called *names_from* and *values_from*.
-
-```{r}
-data %>% 
-  group_by(YEAR, REGION) %>% 
-  summarise(ITEMS = sum(ITEMS)) %>% 
-  ungroup() %>% 
-  pivot_wider(names_from = REGION, values_from = ITEMS)
-```
-
-As we can see, we now have a table that is more reable and could be included within a report.
-Tables in the 'tall format' are required for visualisation functions (like hchart) and not formatted to be readable.
-
 ## Summary
 
 We haven't introduced many new functions, but *mutate* and *ifelse* are both incredibly powerful and versatile.
@@ -550,7 +502,6 @@ All the new functions from this sessions are listed below.
 - mutate()
 - ifelse()
 - case_when()
-- pivot_wider()
 - round()
 - min()
 - max()

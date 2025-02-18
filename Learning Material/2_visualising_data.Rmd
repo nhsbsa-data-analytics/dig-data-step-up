@@ -477,7 +477,7 @@ These are all the highcharter-related functions we have used in this session.
 - hc_xAxis
 - hc_title()
 - hc_tooltip()
-- hc_plotOptions (additional code for new ccharts at the end)
+- hc_plotOptions (additional code for new charts at the end)
 - round()
 
 ## Exercise
