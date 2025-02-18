@@ -2,10 +2,18 @@
 The Dig Data Step Up Career Challenge
 
 
-Part One:  
+Project Set up
+
+1. Set Up
+
+Content:  
+
+- How to 
+
+Part One: Data Reporting
 
 
-1. Introduction to R
+2. Introduction to R
 
 Functions:
 
@@ -31,7 +39,7 @@ Content:
 - Basic Base r functions
 
 
-2. Transforming and Aggregating Data
+3. Transforming and Aggregating Data
 
 Functions:
 
@@ -60,5 +68,43 @@ Content:
 - Basic dplyr sorting
 
 
-3. Visualising Data
+4. Visualising Data  
+
+Functions:  
+
+Content:  
+
+
+
+Part Two:  
+
+6. Data Metrics and Insight
+
+Functions:
+
+- mutate()
+- ifelse()
+- case_when()
+- round()
+- min()
+- max()
+- median()
+- mean()
+- quartile()
+- hcboxplot()
+
+Content:
+
+- Creating new variables
+- Conditional logic
+- Logical operators (<, >, <= and >=)
+- Metric generation
+- Numerical statistical inference
+- Visual statistical inference
+
+
+
+
+
+
 

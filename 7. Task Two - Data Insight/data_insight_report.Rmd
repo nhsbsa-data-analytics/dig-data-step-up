@@ -1,0 +1,70 @@
+---
+title: 'Report Two: Data Insight'
+output: html_document
+date: "2025-02-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+Task
+
+Write a report using a mixture of code and text.
+The code must run otherwise the report can not be 'knit' into a html (or pdf) document.
+
+1. Line Chart: Monthly cost of antidepressant prescribing per region, for all months
+2. Table: Annual cost of antidepressant prescribing per region (requires a pivot)
+3. Line Chart: Monthly percentage of all prescribing costs that are for antidepressants per region, for all months.
+4. Boxplot: distribution of monthly percentage values
+5. Select a Region of your choice. 
+
+
+## Introduction
+
+
+## Overview
+
+
+
+# Regional monthly cost of anti depp
+
+
+
+```{r}
+data %>% 
+  group_by(REGION, YEAR) %>% 
+  summarise(COST = sum(COST)) %>% 
+  
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
