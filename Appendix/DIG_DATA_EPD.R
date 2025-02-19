@@ -83,9 +83,58 @@ get_epd_data = function(year_month){
 data = lapply(year_month_vec, get_epd_data)
 
 # Bind rows: 50 MB
-df = data %>% 
+epd = data %>% 
   bind_rows() %>% 
   rename_all(.funs = toupper)
+
+epd = readRDS("Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds") %>% 
+  inner_join(
+    df %>% 
+      select(
+        DRUG = CHEMICAL_SUBSTANCE_BNF_DESCR, 
+        BNF_SECTION = SECTION_DESCR,
+        BNF_PARAGRAPH = PARAGRAPH_DESCR
+        )
+  )
+
+# Extension data
+extension_df = epd %>%
+  inner_join(bnf) %>% 
+  filter(YEAR_MONTH >= 202101) %>% 
+  mutate(YEAR = substr(YEAR_MONTH,1,4)) %>% 
+  transmute(
+    YM = factor(YEAR_MONTH),
+    YEAR = factor(YEAR),
+    REGION = REGIONAL_OFFICE_NAME,
+    BNF_CHAPTER = BNF_CHAPTER_PLUS_CODE,
+    BNF_SECTION = SECTION_DESCR,
+    DRUG = CHEMICAL_SUBSTANCE_BNF_DESCR,
+    ITEMS = ITEMS,
+    COST = NIC
+  ) %>% 
+  filter(REGION != "UNIDENTIFIED")
+
+# Standard data
+standard_df = extension_df %>% 
+  filter(BNF_SECTION == "Antidepressant drugs") %>% 
+  group_by(
+    YM,
+    YEAR,
+    REGION,
+    DRUG
+  ) %>% 
+  summarise(
+    ITEMS = sum(ITEMS),
+    COST = sum(COST)
+  ) %>% 
+  ungroup()
+
+# Save Data
+saveRDS(standard_df, "Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+saveRDS(extension_df, "Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+
+# Clean
+rm(list = ls()); gc()
 
 # Set directory to project root
 setwd(find_root(criterion = is_rstudio_project))

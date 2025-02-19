@@ -1,11 +1,15 @@
 
 # Transforming and Aggregating Data Exercises
 
-# Load Data
+# Set directory
+setwd(rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
+
+# Load data
 data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 
 # Load libraries
 library(dplyr)
+library(tidyr)
 
 # Question 1: Nationally, calculate the top 10 prescribed anti-depressants across the whole time frame, sorted from biggest from smallest.
 data %>% 
@@ -19,7 +23,7 @@ data %>%
 data %>% 
   filter(DRUG == "Mirtazapine") %>% 
   group_by(YM) %>% 
-  summarise(ITEMS = sum(ITEMS)) %>% 
+  summarise(COST = sum(COST)) %>% 
   ungroup()
 
 # Question 3: What is the annual spend of Sertraline hydrochloride prescribing in the Midlands region?
@@ -29,7 +33,10 @@ data %>%
   summarise(COST = sum(COST)) %>% 
   ungroup()
 
-# Question 4: How many anti-depressant items were prescribed nationally in 2024?
+# Question 4: Create a (pivoted) table that showsthe cost of anti-depressant prescribing per region per year?
+# Note: Each row should be a year and each column should be a region.
 data %>% 
-  filter(YEAR == 2024) %>% 
-  summarise(ITEMS = sum(ITEMS))
+  group_by(YEAR, REGION) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = YEAR, values_from = COST)
