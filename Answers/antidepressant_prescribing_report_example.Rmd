@@ -23,18 +23,17 @@ data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 
 # Introduction
 
-You are a Public Health Analyst and you have been asked to write a report.
-This report will describe and analyse antidepressant prescribing, looking at volume and cost, both nationally and regionally.
-The title of this report is 'Longitudinal Analysis of Antidepressant Prescribing'.
-Longitudinal just means the analysis is over an extended period of time, which we have with 4 years of monthly data.
-The report is to be split into two sections:
+This report will describe and analyse antidepressant prescribing, looking at volume and cost, both nationally and regionally. This report only looks at English prescribing data, aggregated monthly, from January 2021 until December 2024. 
 
-Part One: To set the context for the report, this will be overall national and regional figures 
-Part Two: The will be followed-up by a more exploratory analysis that delves into antidepressant prescribing cost trends.
-Part Two Extension: Those attempting the extension task can then look at creating standardised metrics to understand more specific prescribing patterns.
+The report is split into three section, which are:
 
+- National and regional antidepressant prescribing summary
+- Understanding antidepressant prescribing cost trends
+- Impact of individual drugs on total antidepressant prescribing costs
 
-# Part One
+Together, the three section aim to generate a better understanding of the breakdown and drivers behind antidepressant prescribing trends. 
+
+# National and regional antidepressant prescribing summary
 
 Part One is a directed analysis and the same content needs to be covered by both streams.
 These required content for Part One is: 
@@ -209,7 +208,6 @@ data %>%
   hc_xAxis(title = list(text = "Year-month")) %>% 
   hc_title(text = "The percentage of monthly antidepressant drug prescribing costs from sertraline hydlochloride, from January 2021 until Decemeber 2024")
 ```
-
 
 
 ```{r}
