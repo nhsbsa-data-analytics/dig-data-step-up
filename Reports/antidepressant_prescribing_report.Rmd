@@ -1,0 +1,226 @@
+---
+title: 'Longitudinal Analysis of Antidepressant Prescribing Volume and Cost'
+output: html_document
+date: "2025-02-14"
+---
+
+```{r setup, include=FALSE, eval=TRUE}
+knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
+```
+
+```{r}
+library(dplyr)
+library(highcharter)
+library(tidyr)
+
+data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+```
+
+# Task
+
+You are a Public Health Analyst and you have been asked to write a report.
+This report will describe and analyse antidepressant prescribing, looking at volume and cost, both nationally and regionally.
+The title of this report is 'Longitudinal Analysis of Antidepressant Prescribing'.
+Longitudinal just means the analysis is over an extended period of time, which we have with 4 years of monthly data.
+The report is to be split into two sections:
+
+Part One: To set the context for the report, this will be overall national and regional figures 
+Part Two: The will be followed-up by a more exploratory analysis that delves into antidepressant prescribing cost trends.
+Part Two Extension: Those attempting the extension task can then look at creating standardised metrics to understand more specific prescribing patterns.
+
+
+# Part One
+
+Part One is a directed analysis and the same content needs to be covered by both streams.
+These required content for Part One is: 
+
+1. Create two vertical bar charts for comparison.
+   First, create a bar chart showing the total annual antidepressant prescribing  (items).
+   Second, create a bar chart that shows the total antidepressant prescribing cost.
+   Describe the trend of each chart and compare the charts against each other.
+   
+2. Create two tables for comparison.
+   First, create a table showing the total annual antidepressant prescribing per region (items, pivot_wider).
+   Second, create a table showing the annual antidepressant prescribing cost per region (pivot_wider). 
+   Describe some regional changes and contrasts between 2021 and 2024.
+   
+3. By now you may have noticed there are contrasts between antidepressant prescribing volumes and costs.
+   Next, we will create two horizontal bar charts for comparison.
+   First, create an ordered bar chart showing the 10 most prescribed antidepressants in the most recent year (items).
+   Second, create an ordered bar chart that shows antidepressants with the greatest total prescribing cost in the most recent year.
+   Highlight and describe any differences between the charts. 
+   
+Try and make text between sections flow, so the report reads well.
+The findings from part one may inform ho you approach part two.
+
+```{r}
+data %>% 
+  group_by(YEAR) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  hchart("column", hcaes(YEAR, ITEMS)) %>% 
+  hc_yAxis(title = list(text = "Items")) %>% 
+  hc_xAxis(title = list(text = "Year")) %>% 
+  hc_title(text = "The annual number of antidepressant drugs prescribed in England from 2021 to 2024")
+```
+
+```{r}
+data %>% 
+  group_by(YEAR) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup() %>% 
+  hchart("column", hcaes(YEAR, COST)) %>% 
+  hc_yAxis(title = list(text = "Cost (£)")) %>% 
+  hc_xAxis(title = list(text = "Year")) %>% 
+  hc_title(text = "The annual cost of antidepressant drugs prescribed in England from 2021 to 2024")
+```
+
+
+```{r}
+data %>% 
+  group_by(YEAR, REGION) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = YEAR, values_from = ITEMS) 
+```
+
+```{r}
+data %>% 
+  group_by(YEAR, REGION) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = YEAR, values_from = COST) 
+```
+
+
+```{r}
+data %>% 
+  filter(YEAR == 2024) %>% 
+  group_by(DRUG) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  top_n(10, ITEMS) %>%
+  arrange(desc(ITEMS)) %>% 
+  hchart("bar", hcaes(DRUG, ITEMS)) %>% 
+  hc_yAxis(title = list(text = "Items")) %>% 
+  hc_xAxis(title = list(text = "Antidepressant drug name")) %>% 
+  hc_title(text = "The ten most prescribed antidepressant drugs prescribed in England in 2024")
+```
+
+```{r}
+data %>% 
+  filter(YEAR == 2024) %>% 
+  group_by(DRUG) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup() %>% 
+  top_n(10, COST) %>%
+  arrange(desc(COST)) %>% 
+  hchart("bar", hcaes(DRUG, COST)) %>% 
+  hc_yAxis(title = list(text = "Cost (£)")) %>% 
+  hc_xAxis(title = list(text = "Antidepressant drug name")) %>% 
+  hc_title(text = "The ten antidepressant drugs with the greatest total prescription cost in England in 2024")
+```
+
+
+# Part Two
+
+Now you have a good understanding around national longitudinal antidepressant prescribing volume and cost trends.
+You will be given various topics or points to explore, and you will decide what approach or charts best does this.
+To supplement the initial analysis, you will now:
+
+- First, look at the monthly cost of antidepressant prescribing per BNF Paragraph, for the most recent year.
+- Then, explore the data and find the antidepressant drugs that are driving the monthly cost trends.
+- Then give a high-level summary to your work and findings.
+
+```{r}
+data %>% 
+  group_by(YM, BNF_PARAGRAPH) %>% 
+  summarise(COST = round(sum(COST))) %>% 
+  ungroup() %>% 
+  hchart("line", hcaes(YM, COST, group = BNF_PARAGRAPH)) %>% 
+  hc_yAxis(title = list(text = "Cost (£)")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly cost of antidepressant prescribing by BNF paragraph from January 2021 until December 2024")
+```
+
+```{r}
+data %>% 
+  filter(DRUG == "Sertraline hydrochloride" | 
+           DRUG == "Duloxetine hydrochloride" |
+           DRUG == "Citalopram hydrobromide") %>% 
+  group_by(YM, DRUG) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup() %>% 
+  hchart("line", hcaes(YM, COST, group = DRUG)) %>% 
+  hc_yAxis(title = list(text = "Items")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly cost of sertraline hydrochloride, duloxetine hydrochloride and citalopram hydrobromide from January 2021 until December 2024")
+```
+
+# Part Two Extension
+
+The extension is only to be attempted if you completed the data_metrics_and_insights learning material and exercises. 
+The analyses within this section will delve a bit deeper into antidepressant prescribing costs.
+
+- First calculate the average cost per item, per BNF paragraph (4), within the BNF antidepressant section, across the whole time frame.
+- Then select one or two drugs with a notable monetary impact, and calculate what their monthly cost amounts to, out of all monthly prescribing costs.
+- The above may have to be displayed as two charts.
+- Then give a high-level summary to your work and findings.
+
+```{r}
+data %>% 
+  filter(YEAR == 2024) %>% 
+  group_by(BNF_PARAGRAPH) %>% 
+  summarise(
+    ITEMS = sum(ITEMS),
+    COST = sum(COST)
+    ) %>% 
+  ungroup() %>%
+  mutate(ITEM_COST = round(COST / ITEMS, 2)) %>% 
+  hchart("bar", hcaes(BNF_PARAGRAPH, ITEM_COST)) %>% 
+  hc_yAxis(title = list(text = "Mean cost per item (£)")) %>% 
+  hc_xAxis(title = list(text = "BNF paragraph (within antidepressant BNF section)")) %>% 
+  hc_title(text = "The 2024 mean item cost of drugs from the four BNF paragraphs within the antidepressant drugs BNF section")
+```
+
+
+
+
+
+```{r}
+data %>% 
+  mutate(DRUG = ifelse(DRUG == "Sertraline hydrochloride", COST, 0)) %>% 
+  group_by(YM) %>% 
+  summarise(
+    COST = sum(COST),
+    DRUG = sum(DRUG)
+    ) %>% 
+  ungroup() %>% 
+  mutate(
+    PROP = round(100 * DRUG / COST, 1)
+    ) %>% 
+  hchart("line", hcaes(YM, PROP)) %>% 
+  hc_yAxis(min = 0, title = list(text = "Percentage of monthly antidepressant drug prescribing cost (%)")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The percentage of monthly antidepressant drug prescribing costs from sertraline hydlochloride, from January 2021 until Decemeber 2024")
+```
+
+
+
+```{r}
+data %>% 
+  mutate(DRUG = ifelse(DRUG == "Venlafaxine", COST, 0)) %>% 
+  group_by(YM) %>% 
+  summarise(
+    COST = sum(COST),
+    DRUG = sum(DRUG)
+    ) %>% 
+  ungroup() %>% 
+  mutate(PROP = round(100 * DRUG / COST, 1)) %>% 
+  hchart("line", hcaes(YM, PROP)) %>% 
+  hc_yAxis(min = 0) %>% 
+  hc_yAxis(min = 0, title = list(text = "Percentage of monthly antidepressant drug prescribing cost (%)")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The percentage of monthly antidepressant drug prescribing costs from venlafaxine, from January 2021 until Decemeber 2024")
+```
+

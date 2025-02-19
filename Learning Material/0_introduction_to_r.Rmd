@@ -137,14 +137,29 @@ This is a monthly dataset that describes how many medicines were prescribed acro
 This is 'real data', so actually describes real anti-depressant prescribing in England.
 We have merged, simplified and filtered all these monthly files into a single dataset.
 
-This dataset now contains 6 columns:
+This dataset now contains 8 columns:
 
 *YM*: The year and month, in the format YYYYMM, where 202401 is the same as January 2024. There are 46 year-month values in the data.
 *YEAR*: The year in the format YYYY. There are 4 years-worth of prescribing information in the dataset.
 *REGION*: The NHS Region. There are 7 regions in the data.
+*BNF_SECTION*: This is a constant value of 'Antidepressant drugs', as these are the only drugs contained in this dataset.
+*BNF_PARAGRPAH*: Antidepressant drugs can be subset into 4 smaller groups, defined by their BNF paragraph.
 *DRUG*: The name of the anti-depressant medicine. There are 32 of these in the data.
 *ITEMS*: How many items were prescribed.
 *COST*: The combined cost for all those items. 
+
+The BNF stands for the *British National Formulary*.
+The BNF is structured hierarchically into Chapters, Sections, Paragraphs and Chemical Substances (Drugs).
+
+For example:
+
+- Amitriptyline hydrochloride is an actual antidepressant *DRUG*
+- Amitriptyline hydrochloride is one of many *DRUG* within the 'Selective serotonin re-uptake inhibitors' *BNF_PARAGRAPH*.
+- Selective serotonin re-uptake inhibitors is one of many *BNF_PARAGRAPH* within the 'Antidepressant drugs' *BNF_SECTION*
+- Antidepressant drugs is one of many *BNF_SECTION* within the '04: Central Nervous System' *BNF_CHAPTER*
+- And there are 23 *BNF_CHAPTER* (although very little prescribing stems from some of the chapters)
+
+In summary, BNF chapters are split into sections, which are then split into paragraphs, and which are then split into actual drugs (i.e. a hierarchy).
 
 In a sentence we could describe this dataset as:
 

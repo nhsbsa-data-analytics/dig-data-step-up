@@ -11,6 +11,9 @@ pacman::p_load(
   'rprojroot'
   )
 
+# Set directory to project root
+setwd(find_root(criterion = is_rstudio_project))
+
 # Function to add a zero to generate year month strings
 add_zero = function(x) ifelse(nchar(x) == 1, paste0("0", x), x)
 
@@ -18,7 +21,7 @@ add_zero = function(x) ifelse(nchar(x) == 1, paste0("0", x), x)
 min_year_month = 202101
 
 # Define max year month: MANUALLY DEFINE
-max_year_month = 202411
+max_year_month = 202412
 
 # Generate max year
 max_year = substr(max_year_month, 1, 4)
@@ -87,20 +90,13 @@ epd = data %>%
   bind_rows() %>% 
   rename_all(.funs = toupper)
 
-epd = readRDS("Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds") %>% 
-  inner_join(
-    df %>% 
-      select(
-        DRUG = CHEMICAL_SUBSTANCE_BNF_DESCR, 
-        BNF_SECTION = SECTION_DESCR,
-        BNF_PARAGRAPH = PARAGRAPH_DESCR
-        )
-  )
+# Bnf lookup
+bnf = read.csv("Appendix/BNF_LOOKUP.csv")
 
 # Extension data
 extension_df = epd %>%
   inner_join(bnf) %>% 
-  filter(YEAR_MONTH >= 202101) %>% 
+  filter(YEAR_MONTH >= min_year_month) %>% 
   mutate(YEAR = substr(YEAR_MONTH,1,4)) %>% 
   transmute(
     YM = factor(YEAR_MONTH),
@@ -108,26 +104,18 @@ extension_df = epd %>%
     REGION = REGIONAL_OFFICE_NAME,
     BNF_CHAPTER = BNF_CHAPTER_PLUS_CODE,
     BNF_SECTION = SECTION_DESCR,
+    BNF_PARAGRAPH = PARAGRAPH_DESCR,
     DRUG = CHEMICAL_SUBSTANCE_BNF_DESCR,
     ITEMS = ITEMS,
     COST = NIC
   ) %>% 
-  filter(REGION != "UNIDENTIFIED")
+  filter(REGION != "UNIDENTIFIED") %>% 
+  arrange(BNF_SECTION, BNF_SECTION, BNF_PARAGRAPH, DRUG, REGION, YM)
 
 # Standard data
 standard_df = extension_df %>% 
   filter(BNF_SECTION == "Antidepressant drugs") %>% 
-  group_by(
-    YM,
-    YEAR,
-    REGION,
-    DRUG
-  ) %>% 
-  summarise(
-    ITEMS = sum(ITEMS),
-    COST = sum(COST)
-  ) %>% 
-  ungroup()
+  select(-BNF_CHAPTER)
 
 # Save Data
 saveRDS(standard_df, "Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
@@ -135,9 +123,3 @@ saveRDS(extension_df, "Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 
 # Clean
 rm(list = ls()); gc()
-
-# Set directory to project root
-setwd(find_root(criterion = is_rstudio_project))
-
-# Save data
-write.csv(df, "Data/DIG_DATA_EPD.csv")
