@@ -1,14 +1,19 @@
 ---
 title: 'Longitudinal Analysis of Antidepressant Prescribing Volume and Cost'
-output: html_document
-date: "2025-02-14"
+author: "YOUR NAME HERE"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 3  
+    number_sections: true 
 ---
 
 ```{r setup, include=FALSE, eval=TRUE}
 knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
 ```
 
-```{r}
+```{r, include=FALSE}
 library(dplyr)
 library(highcharter)
 library(tidyr)
@@ -16,7 +21,7 @@ library(tidyr)
 data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 ```
 
-# Task
+# Introduction
 
 You are a Public Health Analyst and you have been asked to write a report.
 This report will describe and analyse antidepressant prescribing, looking at volume and cost, both nationally and regionally.
