@@ -1,0 +1,488 @@
+---
+title: "Visualising Data"
+author: "Adnan Shroufi"
+date: "2025-02-11"
+output: html_document
+---
+
+```{r setup, echo=TRUE, eval=TRUE}
+if (!requireNamespace("rprojroot", quietly = TRUE)) {install.packages("rprojroot")}
+knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
+```
+
+# Introduction
+
+Visualising is an important tool in both analytics and data science.
+Visualising data can help us better understand data and see trends in data, amongst other things.
+We will use an R package called *highcharter* to do this.
+We will first install this package using *install.packages*.
+
+```{r}
+install.packages("highcharter")
+```
+
+Thee highcharter is free to use for students, and some public sector organisations.
+Private companies have to pay an annual subscription fee to use the package, which is eomthig to be aware of. 
+We will then install this and thee dplyr packages into this session using the *library* function.
+
+```{r}
+library(highcharter)
+library(dplyr)
+```
+
+And load in the same dataset using *readRDS*.
+
+```{r}
+data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+```
+
+## Overview
+
+The highcharter package is an interesting and useful package because:
+
+- You can easily create some very nice looking charts
+- You can also create (more complicated) production-level charts 
+
+Within highcharter, we will only be using the *hchart* function, to easily create some very ince looking charts.
+We can create a huge number of charts with hchart just using 3 things:
+
+- Dataset
+- Chart Type
+- Chart Aesthetic (or how variables in your data are mapped to the chart visual properties).
+
+Here is an exmaple of the kind of charts you can create using hchart and very little code.
+
+```{r}
+browseURL("https://jkunst.com/highcharter/articles/hchart.html")
+```
+
+## Chart Types
+
+In this session we will look at 3 kinds of chart types:
+
+- Vertical bar charts
+- Horizontal bar charts
+- Line charts
+
+The aesthetic for each of these chart types is just defining what information you want displayed on the chart (numerical) y-axis and x-axis.
+
+## Chart Elements
+
+When visualising data in R (or any other programming language), there are usually a few steps you would through.
+
+1. Aggregate the data
+2. Create a basic plot
+3. Refine or develop the plot
+
+Point 1. is very important.
+If you want to visualise data in a certain way, you must first aggregate the data in a certain way.
+The best way to demonstrate this is through an example.
+
+# EXample 1: Aggregate Data
+
+Let's say I want to create a bar chart that shows the cost of Fluoxetine hydrochloride prescribing nationally each year.
+Because there are only 4 years, I would need a dataframe with only 4 rows to do this, with an ITEM value per YEAR. 
+To generate this data, I would have to do the following aggregation:
+
+1. Filter the DRUG to Fluoxetine hydrochloride
+2. Group by YEAR
+3. Summarise and sum by ITEMS
+4. Ungroup
+
+The code would look like this:
+
+```{r}
+df_bar = data %>% 
+  filter(DRUG == "Fluoxetine hydrochloride") %>% 
+  group_by(YEAR) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup()
+```
+
+## Example 1: Basic Chart
+
+Using this data, I can then define 2 of the 3 things I need to create a basic hchart:
+
+1. The data (df_bar)
+2. The chart type ("column")
+2. The Chart aesthetic (YEAR vs COST)
+
+I want to use the df_bar object, and I want to create a bar chart where the x-axis is the region name, and the y-axis is the total number of items.
+The following code would do this.
+
+```{r}
+hchart(df_bar, "column", hcaes(YEAR, COST))
+```
+
+# Example 1: Refine Chart
+
+This is a start, although the chart needs some work, the following steps would make it look nicer.
+
+1. Round the data to whole number of pounds
+2. Add some axis labels
+3. Add a title
+
+We will do these refinements one by one.
+We can also 'chain' or 'pipe' highcharter commands together suing the '%>%' operator.
+
+First, we can either round the data as part of the aggregation, or within the chart code, using the *round* function.
+For simplicity we can do this within the chart function, although generally speaking it is good to do this within the data aggregation stage. 
+
+```{r}
+hchart(df_bar, "column", hcaes(YEAR, round(COST)))
+```
+
+Second, we can add some x-axis and y-axis labels using the *hc_xAxis* and *hc_yAxis* functions.
+Each of these functions have multiple parameters.
+And some of these parameters even have multiple parameters within themselves.
+For example, the *title* parameter has multiple parameters, which must in turn be defined within a list.
+Our x-axis and y-axis code will not get much more complicated than this, so don't worry about this code syntax.
+
+```{r}
+hchart(df_bar, "column", hcaes(YEAR, round(COST))) %>% 
+  hc_xAxis(title = list(text = "Year")) %>% 
+  hc_yAxis(title = list(text = "Millions of Pounds (£)"))
+```
+
+Finally, we need to give the chart an appropriate title.
+The title should describe exactly what the showing is showing.
+
+```{r}
+hchart(df_bar, "column", hcaes(YEAR, round(COST))) %>% 
+  hc_xAxis(title = list(text = "Year")) %>% 
+  hc_yAxis(title = list(text = "Millions of Pounds (£)")) %>% 
+  hc_title(text = "The annual cost of national anti-depressant prescribing from 2021 until 2024")
+```
+  
+## Example 2: Aggregate the Data
+
+Let's say I want to create a bar chart that shows how much Setraline Hydrochloride was prescribed in each region in 2024.
+Because there are only 7 regions, I would need a dataframe with only 7 rows to do this, with an ITEM value per REGION. 
+To generate this data, I would have to do the following aggregation:
+
+1. Filter the DRUG to Setraline Hydrochloride
+2. Filter the YEAR to 2024
+3. Group by REGION
+4. Summarise and sum by ITEMS
+5. Ungroup
+
+The code would look like this:
+
+```{r}
+df_bar_two = data %>% 
+  filter(DRUG == "Sertraline hydrochloride", YEAR == 2024) %>% 
+  group_by(REGION) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  arrange(ITEMS)
+```
+
+## Example 2: Basic Chart
+
+I want to create a horizontal bar chart.
+This is because some region names are very long.
+In highcharter:
+
+Vertical bar chart = "column"
+Horizonatal bar chart = "bar
+
+Once again, I need 3 things to create my basic chart:
+
+1. The data (df_bar_two)
+2. Chart type ("bar")
+3. The Chart aesthetic (REGION vs ITEMS)
+
+Now, even through visually, the x-axis will be ITEMS, highcharter expects the numerical value of a "bar" or "column" chart to be the y-axis.
+With this in mind, I want to use the df_bar_two object, and I want to create a bar chart where the x-axis is the region name, and the y-axis is the total number of items.
+The following code would do this.
+
+```{r}
+hchart(df_bar_two, "bar", hcaes(REGION, ITEMS)) 
+```
+
+## Example 2 : Refine Chart
+
+The values don't need rounding, so this chart just needs:
+
+1. Add axis labels
+2. Add a title
+
+These will both be done together is one go.
+Remember, the y-axis label is for the numerical axis with a hchart type "column" or "bar".
+
+```{r}
+hchart(df_bar_two, "bar", hcaes(REGION, ITEMS)) %>% 
+  hc_xAxis(title = list(text = "Region")) %>% 
+  hc_yAxis(title = list(text = "Number of sertraline hydrochloride items")) %>% 
+  hc_title(text = "The total regional sertraline hydrochloride prescribing volume in 2024")
+```
+
+We can use the exact same code, except just change chart type to "column".
+As can be seen, we can switch between chart types with little effort (if our data is aggregated and/or formatted appropriately).
+
+```{r}
+hchart(df_bar_two, "column", hcaes(REGION, ITEMS)) %>% 
+  hc_xAxis(title = list(text = "Region")) %>% 
+  hc_yAxis(title = list(text = "Number of sertraline hydrochloride items")) %>% 
+  hc_title(text = "The total regional sertraline hydrochloride prescribing volume in 2024")
+```
+
+## Example 3: Aggregate Data
+
+Next we will create a line chart, that shows the monthly cost of all anti-depressant prescribing in London, for the entire time period.
+This is going to be a single value per month, so the aggregated data should have the same number of rows as the number of months in the data. 
+To generate this data, I would have to do the following aggregation:
+
+1. Filter the REGION to London
+2. Group by YM
+4. Summarise and sum by COST
+5. Ungroup
+
+The code would look like this:
+
+```{r}
+df_line = data %>% 
+  filter(REGION == "LONDON") %>% 
+  group_by(YM) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup()
+```
+
+## Example 3: Basic Chart
+
+Once again, I need 3 things to create my basic chart:
+
+1. The data (df_line)
+2. The chart type ("line")
+3. The Chart aesthetic (YM vs COST)
+
+I want to use the df_line object, and I want to create a line chart where the x-axis is the year-month, and the y-axis is the prescribing cost.
+The following code would do this.
+
+```{r}
+hchart(df_line, "line", hcaes(YM, COST))
+```
+
+## Example 3: Refine Chart
+
+This is a start, although the chart, once again, needs some work, the following steps would make it more a more useful chart.
+
+1. Adjust the minimum y-axis value.
+2. Add axis labels
+3. Add a title
+
+We will first set the y-axis minimum value to zero.
+This is optional, and depends on the scale of the chart.
+In this instance, the y-axis minimum being zero may give you a better sense of the changing prescribing volumes. 
+
+```{r}
+hchart(df_line, "line", hcaes(YM, COST)) %>% 
+  hc_yAxis(min = 0)
+```
+
+We can now add the axis labels and a title.
+The y-axis information can be inserted into the same hc_yAxis function that has set the y-axis minimum value.
+Alternatively, the y-axis title information can be specified within a seperate function call.
+Do whichever you find easier.
+The 2 code chunks below both create the same chart.
+
+```{r}
+# Identical chart No. 1
+hchart(df_line, "line", hcaes(YM, COST)) %>% 
+  hc_yAxis(min = 0) %>% 
+  hc_yAxis(title = list(text = "Number of antidepressants")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly number of antidepressants prescribed in London from January 2021 until December 2024")
+
+# Identical chart No. 2
+hchart(df_line, "line", hcaes(YM, COST)) %>% 
+  hc_yAxis(min = 0, title = list(text = "Number of antidepressants")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly number of antidepressants prescribed in London from January 2021 until December 2024")
+```
+
+# Example 4: Aggregate the Chart
+
+In this chart, we will compare the national monthly prescribing volume of 2 drugs.
+To do this, we need to use a new logical operator, the *|* logical operator, which means *or*.
+
+The code below we filter the data for either of the 2 drugs mentioned
+
+```{r}
+df_line_two = data %>% 
+  filter(DRUG == "Sertraline hydrochloride" | DRUG == "Amitriptyline hydrochloride")
+```
+
+We can do a quick summarise to check what DRUG remain in the dataset.
+As we can see, the filter has only retained the 2 specified drugs.
+If you wanted, you could use multiple *|* operators, for example to retain only 3 or 4 DRUG. 
+
+```{r}
+df_line_two %>% 
+  group_by(DRUG) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup()
+```
+
+So, we want to filter the data the data for only these 2 DRUG, but then aggregate COST for each YM.
+To do this we need to:
+
+1. Filter either DRUG (using OR)
+2. Group_by YM and DRUG (because we want values for each DRUG)
+3. Sum COST (and round to nearest pound)
+
+```{r}
+df_line_two = data %>% 
+  filter(DRUG == "Sertraline hydrochloride" | DRUG == "Amitriptyline hydrochloride") %>% 
+  group_by(YM, DRUG) %>% 
+  summarise(COST = round(sum(COST))) %>% 
+  ungroup()
+```
+## Example 4: Basic chart
+
+We now want to create a hchart, but with one line for each DRUG.
+To do this, we need to use the *group* parameter, where *group = DRUG*.
+In effect, this is saying create one line for each DRUG.
+
+In highcharter, each set of data points is called a *series*.
+If you click on a series name, underneath the chart, you can remove/add a series. 
+
+```{r}
+hchart(df_line_two, "line", hcaes(YM, COST, group = DRUG))
+```
+
+## Example 4: Refine Chart
+
+We will refine in a few ways:
+
+1. Change y-axis minimum value 
+2. Add axis labels
+3. Add a title
+4. Create a shated tooltip
+
+We will do the first 3 steps in one go.
+
+```{r}
+hchart(df_line_two, "line", hcaes(YM, COST, group = DRUG)) %>% 
+  hc_yAxis(min = 0, title = list(text = "Prescribing cost in millions (£)")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly cost of national sertraline hydrochloride and amitriptyline hydrochloride prescribing from January 2021 until December 2024")
+```
+
+If the mouse cursor hovers over each line, seperate values can be viewed within the tooltip (one per series).
+We can view both series together using the following code *hc_tooltip(shared = TRUE)*. 
+
+```{r}
+hchart(df_line_two, "line", hcaes(YM, COST, group = DRUG)) %>% 
+  hc_yAxis(min = 0, title = list(text = "Prescribing cost in millions (£)")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly cost of national sertraline hydrochloride and amitriptyline hydrochloride prescribing from January 2021 until December 2024") %>% 
+  hc_tooltip(shared = TRUE)
+```
+
+## 'Piping' straight into hchart and different chart types
+
+We need to aggregate data before using it within hchart.
+However, you can actually 'pipe' the aggregation outout straight into hchart if you want.
+
+We will create a vertical bar chart that shows the annual cost of all antidepressant prescribing to demonstrate this.
+First we will aggrgeate the data.
+
+```{r}
+df_bar_three = data %>% 
+  group_by(YEAR) %>% 
+  summarise(COST = round(sum(COST))) %>% 
+  ungroup()
+```
+
+We can then visualise the data.
+
+```{r}
+hchart(df_bar_three, "column", hcaes(YEAR, COST))
+```
+
+Alternatively, we can 'pipe' the aggregation straight into hchart.
+If you do this, leave the data parameter blank, as chart knows the piped output is the visualisation input.
+
+```{r}
+data %>% 
+  group_by(YEAR) %>% 
+  summarise(COST = round(sum(COST))) %>% 
+  ungroup() %>% 
+  hchart("column", hcaes(YEAR, COST))
+```
+
+Finally, we will see how many different charts we can make with a single dataframe.
+This highlights the flexibility and power of hchart.
+Note, some of charts could be made more effective, if the data were aggregated more appropriately for that singular chart type..
+
+```{r}
+df_multichart = data %>% 
+  group_by(YEAR, REGION) %>% 
+  summarise(
+    COST = round(sum(COST)),
+    ITEMS = sum(ITEMS)
+    ) %>% 
+  ungroup()
+```
+
+Here are multiple charts using the above dataframe (although one has an additional filter and then piped into hchart).
+
+```{r}
+# Vertical bar chart grouped by region
+hchart(df_multichart, "column", hcaes(YEAR, COST, group = REGION))
+
+# Horizontal bar chart grouped by region
+hchart(df_multichart, "bar", hcaes(YEAR, COST, group = REGION))
+
+# Horizontal bar chart grouped by region
+hchart(df_multichart, "area", hcaes(YEAR, COST, group = REGION)) %>% 
+  hc_plotOptions(area = list(stacking = "normal"))
+
+# Annual line chart grouped by region
+hchart(df_multichart, "line", hcaes(YEAR, COST, group = REGION))
+
+# Same as above but with a curvy line 
+hchart(df_multichart, "spline", hcaes(YEAR, COST, group = REGION))
+
+# Heatmap of cost per region per year, rounded to nearest 1000 (see negative value within round function)
+hchart(df_multichart, "heatmap", hcaes(YEAR, REGION, value = round(COST, -3))) %>% 
+  hc_plotOptions(heatmap = list(dataLabels = list(enabled = TRUE)))
+
+# scatter chart of regional cost vs items in 2024 (with each point being a region)
+df_multichart %>% 
+  filter(YEAR == 2024) %>% 
+  hchart("scatter", hcaes(COST, ITEMS, group = REGION))
+```
+
+The above charts are just to show you the range of things you can do with very little additional tweaking and/or additional code.
+Again, here are the examples again of what you can do with a basic hchart function.
+You can complete all exercises and reports just using "bar", "column" and "line" chart types, so don't worry about the above charts you are seeing for the first time.
+
+```{r}
+browseURL("https://jkunst.com/highcharter/articles/hchart.html")
+```
+
+## Summary
+
+Visualising data is a key daya analytics and data science skill.
+It starts with aggregating data, in a way that it is appropriately formatted for the type of chart you want.
+It's then a case of firstly creating a base plot.
+After that, it's about refining the plot appearance and format.
+
+These are all the highcharter-related functions we have used in this session.
+
+- hchart()
+- hc_yAxis()
+- hc_xAxis
+- hc_title()
+- hc_tooltip()
+- hc_plotOptions (additional code for new charts at the end)
+- round()
+
+## Exercise
+
+Now try the exercise within the Visualising Data folder.
+This is found within the 'visualising_data_exercise.r' script.
+This is a 'regular' R script rather than a markdown document.
+Write your code to answer each question within the script.

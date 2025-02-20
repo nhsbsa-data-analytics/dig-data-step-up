@@ -1,0 +1,274 @@
+---
+title: "1. Introduction to R"
+author: "Adnan Shroufi"
+date: "2025-02-05"
+output: html_document
+---
+
+```{r setup, echo=TRUE, eval=TRUE}
+if (!requireNamespace("rprojroot", quietly = TRUE)) {install.packages("rprojroot")}
+knitr::opts_knit$set(root.dir = find_root(criterion = is_rstudio_project))
+```
+
+# Introduction
+
+Welcome to the Dig Data Step-up Challenge!
+
+In this session we will:
+
+- learn the basics of R Studio
+- learn some simple Base R functions
+- become more familiarised with the dataset in the challenge
+
+## Why Use R?
+
+Firstly, you might be asking, why bother using R in the first place, compared with a tool like Microsoft Excel.
+While Excel is a great tool with lots of benefits, it does have some limitations. These include:
+
+- Excel can be slow when working with large files
+- Going over the same steps in Excel every day/week/month to generate the same report/analysis is time consuming and repetitive.
+
+Using R can can overcome these issues for the following reasons:
+
+- R can work with large files far more easily and quickly
+- A single R script can do all of the time consuming and repetitive tasks for you
+
+## Markdown Documents
+
+All of the R sections of the Step-up Challenge are written in a 'markdown' format.
+This is kind of like a 'notebook' in Python.
+
+Basically, you have text, interspersed with cells containing code, whcih can be run.
+You can run a cell by clicking on the green arrow to the right hand side of a cell.
+
+The below code will print some text into the bottom-left pane of R Studio.
+
+```{r}
+print("Welcome to the R Step-up Challenge!")
+```
+
+## R Studio Overview
+
+R Studio is known as an Integrated Development Environment (IDE).
+Within this IDE you can load data, write code, see the output from code, and inspect charts, and so on.
+The R Studio IDE is made up on 4 panes, or sections.
+Each one has a purpose and can be expanded or re-sized as you would like.
+
+Top left: Source (where you write code)
+Bottom left: Console (where code is evaulated by R)
+Top right: Environment (to see and inspect data and objects)
+Bottom right: Navigation (to navigate and view files and plots) 
+
+## Directories and Loading Data
+
+So, R is a programming language with lots of benefits.
+However, if you're using it for the first time, there will be a lot of new things to learn.
+
+With programming, you have to tell a computer exctaly what to do.
+And if there is a slight mistake or mis-spelling with an instrauction, it basically won't run.
+
+When loading data, you need to first know what directory you are in.
+Think of your computer like a giant digital filing cabinet with lots of drawers and folders inside.
+
+In R Studio, getwd() is like asking, "Which drawer and folder am I currently working in?"
+We can do this now.
+
+```{r}
+getwd()
+```
+
+We can now list all of the files that are inside the folder or location we are working from (the directory).
+
+```{r}
+list.files()
+```
+
+Next, we want to load some data from the data folder.
+Using the navigation pane (bottom-right) you can see the Data folder.
+
+Inside that is ssome data called 'STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds'
+An 'Rds' is an R-specific data type, that is more compressed than a CSV file.
+It also allows formatting to saved within the object, that a CSV file would be unable to do. 
+
+We will load this with the 'readRDS' function.
+If we want to read this data and save it as an object within our environment pane (top right), we have to *assign* the object a name.
+We must spell the file correctly (all code and objects are case-sensitive in R) and assign it a name (in this instance just 'data').
+
+```{r}
+data = readRDS("STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+```
+
+So, the above does not work, because we haven't specified the folder to load the data from.
+We need to load the data form the 'Data' folder.
+And we need to use a forward slash ('/') between the folder location and the object name.
+
+```{r}
+data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+```
+
+## Global Environment
+
+We can now view our data in the Global Environment.
+You can't view an Rds object within the file explorer, like you can with a CSV file.
+We just need to click on the object name.
+
+Inside the object view we can:
+
+- Sort columns numerically or alphabetically
+- Filter columns by a value or piece of text (string) 
+
+The name of the type of object in global environment is a *dataframe*.
+A *dataframe* is like a table you might see in Excel or Google Sheets. 
+It’s a way of organizing data in rows and columns.
+This is where each column holds a specific type of information, and each row holds data for a different item or record.
+
+## What is the actual data we are using?
+
+This data is from the NSHBSA Open Data Portal, and is called the 'Prescription Cost analysis' dataset.
+
+https://opendata.nhsbsa.net/dataset/prescription-cost-analysis-pca-monthly-data
+
+This data is open source, which means:
+
+- We can share it openly
+- It has no security concerns
+
+This is a monthly dataset that describes how many medicines were prescribed across all GP Practices in england, per NHS Region, and what they cost.
+This is 'real data', so actually describes real anti-depressant prescribing in England.
+We have merged, simplified and filtered all these monthly files into a single dataset.
+
+This dataset now contains 8 columns:
+
+*YM*: The year and month, in the format YYYYMM, where 202401 is the same as January 2024. There are 46 year-month values in the data.
+*YEAR*: The year in the format YYYY. There are 4 years-worth of prescribing information in the dataset.
+*REGION*: The NHS Region. There are 7 regions in the data.
+*BNF_SECTION*: This is a constant value of 'Antidepressant drugs', as these are the only drugs contained in this dataset.
+*BNF_PARAGRPAH*: Antidepressant drugs can be subset into 4 smaller groups, defined by their BNF paragraph.
+*DRUG*: The name of the anti-depressant medicine. There are 32 of these in the data.
+*ITEMS*: How many items were prescribed.
+*COST*: The combined cost for all those items. 
+
+The BNF stands for the *British National Formulary*.
+The BNF is structured hierarchically into Chapters, Sections, Paragraphs and Chemical Substances (Drugs).
+
+For example:
+
+- Amitriptyline hydrochloride is an actual antidepressant *DRUG*
+- Amitriptyline hydrochloride is one of many *DRUG* within the 'Selective serotonin re-uptake inhibitors' *BNF_PARAGRAPH*.
+- Selective serotonin re-uptake inhibitors is one of many *BNF_PARAGRAPH* within the 'Antidepressant drugs' *BNF_SECTION*
+- Antidepressant drugs is one of many *BNF_SECTION* within the '04: Central Nervous System' *BNF_CHAPTER*
+- And there are 23 *BNF_CHAPTER* (although very little prescribing stems from some of the chapters)
+
+In summary, BNF chapters are split into sections, which are then split into paragraphs, and which are then split into actual drugs (i.e. a hierarchy).
+
+In a sentence we could describe this dataset as:
+
+- Per English NHS Region and per year-month, the volume and cost of each antidepressant drug prescribed.
+
+And what we are going to do with this data is:
+
+- Understand national and regional prescribing volumes and costs
+- Understand national and regional prescribing trends
+- Understand monthly and annual trends
+- And finally, maybe even predict future monthly anti-depressant prescribing volumes
+
+Some of the following base R functions will help us have an overview of the data content and structure. 
+
+## Some basic base R Functions
+
+We will now look at some 'Base R' functions.
+'Base R' are the in-built functions within R.
+There are lots of them, but we will just look at a few.
+
+The str() function lets you know the 'structure' of an object.
+You just need to 'wrap' the function around the *data* object.
+
+```{r}
+str(data)
+```
+
+We can see how many rows and columns there are.
+We can also see what type of data is contained in each column.
+These are 'Factor', 'chr', 'int' and 'num'.
+
+Each is described below:
+
+*Factor*: A factor is a type of data in R that represents categories or groups. 
+Imagine you're sorting people into different groups based on their favorite color (like red, blue, and green). 
+Each person belongs to one of these groups, and the groups themselves are factors. 
+For example, "red" is a category or level of the "color" factor.
+
+*Character*: This refers to text or words. 
+When you have things like names or descriptions (like "John" or "pizza"), those are character data. 
+It's like when you're writing a report or document of some kind. — you're using characters (letters and words).
+
+*Integer*: An integer is just a whole number. 
+So, it's any number that doesn’t have a decimal, like 1, 5, or 100. 
+If you think about counting objects (like apples or books), you'd use integers because you're counting whole things, not parts.
+
+*Numeric*: Numeric data can be any kind of number, including those with decimals. 
+For example, 2, 3.5, and 10.75 are all numeric. 
+It’s like when you're measuring things, like the height of someone (5.6 feet) or the temperature (23.7°C).
+
+## Specifying Columns Within a Dataframe
+
+If we type the name of an R object and then *$* sign, the possible column names will then be accessible.
+That way we can specify a column name.
+We often need to feed a column name using a *$* sign into a function.
+
+If we feed the numeric and integer columns into summary(), we can better undertsand the distribution of the data.
+
+```{r}
+summary(data$ITEMS)
+summary(data$COST)
+```
+
+We can feed the character or factor columns into the table() function to get a count of records per character or factor entry.
+The number under each character or factor describes how many records each one has. 
+
+```{r}
+table(data$REGION)
+table(data$DRUG)
+```
+
+A final few Base functions.
+First is head(), this displays the first few rows of a dataframe, if you want to quickly check the content.
+
+```{r}
+head(data)
+```
+
+Finally, is:
+
+- how to check the number of columns in a dataframe
+- how to check the number of rows in a dataframe
+- how to check the number of levels in a factor type column
+
+```{r}
+ncol(data)
+nrow(data)
+nlevels(data$YM)
+nlevels(data$YEAR)
+```
+
+## Summary
+
+So, we know how to find out which directory we are in and how to load in some data.
+
+We have an initial understanding of what this data is actually about and it's contents. 
+
+And up until now we have used the following R functions:
+
+- print()
+- getwd()
+- list.files()
+- readRDS()
+- str()
+- summary()
+- table()
+- head()
+- ncol()
+- nrow()
+- nlevels()
+
+In the next section we will look at R libraries, and in particular the *dplyr* library.
