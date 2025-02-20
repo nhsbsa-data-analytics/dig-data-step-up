@@ -138,7 +138,7 @@ Question 5: Create a monthly line chart, which shows what percentage of *nationa
 
 # Report
 
-Data Reporting (Part 1 & Q2)
+Data Reporting (Part 1 & Q2)  
 Data Insight (Part 1, Q2 & Q3)
 
 # Part One
