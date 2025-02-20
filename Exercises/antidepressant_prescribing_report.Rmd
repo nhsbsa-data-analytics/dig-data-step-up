@@ -61,26 +61,28 @@ Try and make text between sections flow, so the report reads well.
 The findings from part one may inform ho you approach part two.
 
 
-# Part Two
+# Part Two (Longitudinal Analysis)
 
-Now you have a good understanding around national longitudinal antidepressant prescribing volume and cost trends.
+Now you have a good understanding around national and regional antidepressant prescribing volume and cost trends.
 You will be given various topics or points to explore, and you will decide what approach or charts best does this.
 To supplement the initial analysis, you will now:
 
-- First, look at the monthly cost of antidepressant prescribing per BNF Paragraph, for the most recent year.
-- Then, explore the data and find the antidepressant drugs that are driving the monthly cost trends.
+- Look at the longitudinal (monthly) trend for all antidepressant items and for the cost of antidepressant prescribing
+- Then, explore the data and find the antidepressant drugs that are driving these monthly item and cost trends.
 - Then give a high-level summary to your work and findings.
 
 
-# Part Two Extension
+# Part Two Extension (Antidepressant Case studies)
 
 The extension is only to be attempted if you completed the data_metrics_and_insights learning material and exercises. 
 The analyses within this section will delve a bit deeper into antidepressant prescribing costs.
 
-- First calculate the average cost per item, per BNF paragraph (4), within the BNF antidepressant section, across the whole time frame.
-- Then select one or two drugs with a notable monetary impact, and calculate what their monthly cost amounts to, out of all monthly prescribing costs.
-- The above may have to be displayed as two charts.
-- Finally, feel free to add any other analyses or charts you feel could be useful or appropriate! 
+- Focus one one or more antidepressants that play a significant role in national volume and cost trends.
+- Try to offer more granular insight into their effect on national prescribing trends
+- Percentage of total antidepressant volume or cost from a drug 
+- Mean cost per item in relation a drug
+- Distrubution of mean cost per item values for a drug
+- Anything else you think might be informative or relevant (be creative!)
 - Then give a high-level summary to your work and findings.
 
 
