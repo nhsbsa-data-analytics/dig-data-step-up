@@ -1,7 +1,8 @@
 # dig-data-step-up
 The Dig Data Step Up Career Challenge
 
-Part One: Data Reporting
+
+# Learning Material & Exercises
 
 
 0. Introduction to R
@@ -135,13 +136,55 @@ Question 4: calculate the annual *mean* monthly total national prescribing cost 
 Question 5: Create a monthly line chart, which shows what percentage of *national* prescribing is from the '02: Cardiovascular System' BNF_CHAPTER.  
 
 
-REPORT: Data Reporting (Q1 & Q2) or Data Insight (Q1, Q2 & Q3)
+# Report
+
+Data Reporting (Part 1 & Q2)
+Data Insight (Part 1, Q2 & Q3)
+
+# Part One
+
+These required content for Part One is: 
+
+1. Create two vertical bar charts for comparison.
+   First, create a bar chart showing the total annual antidepressant prescribing  (items).
+   Second, create a bar chart that shows the total antidepressant prescribing cost.
+   Describe the trend of each chart and compare the charts against each other.
+   
+2. Create two tables for comparison.
+   First, create a table showing the total annual antidepressant prescribing per region (items, pivot_wider).
+   Second, create a table showing the annual antidepressant prescribing cost per region (pivot_wider). 
+   Describe some regional changes and contrasts between 2021 and 2024.
+   (NOTE: within mutate a numerical column name, e.g. 2021 must be placed with ticks, so `2021`, for example *mutate(NEW_VAL = `2021` + `2022`)*)
+   
+3. By now you may have noticed there are contrasts between antidepressant prescribing volumes and costs.
+   Next, we will create two horizontal bar charts for comparison.
+   First, create an ordered bar chart showing the 10 most prescribed antidepressants in the most recent year (items).
+   Second, create an ordered bar chart that shows antidepressants with the greatest total prescribing cost in the most recent year.
+   Highlight and describe any differences between the charts. 
+   
+Try and make text between sections flow, so the report reads well.
+The findings from part one may inform ho you approach part two.
+
+# Part Two (Longitudinal Analysis)
+
+Now you have a good understanding around national and regional antidepressant prescribing volume and cost trends.
+You will be given various topics or points to explore, and you will decide what approach or charts best does this.
+To supplement the initial analysis, you will now:
+
+- Look at the longitudinal (monthly) trend for all antidepressant items and for the cost of antidepressant prescribing
+- Then, explore the data and find the antidepressant drugs that are driving these monthly item and cost trends.
+- Then give a high-level summary to your work and findings.
 
 
+# Part Two Extension (Antidepressant Case studies)
 
+The extension is only to be attempted if you completed the data_metrics_and_insights learning material and exercises. 
+The analyses within this section will delve a bit deeper into antidepressant prescribing costs.
 
-
-
-
-
-
+- Focus one one or more antidepressants that play a significant role in national volume and cost trends.
+- Try to offer more granular insight into their effect on national prescribing trends
+- Percentage of total antidepressant volume or cost from a drug 
+- Mean cost per item in relation a drug
+- Distribution of mean cost per item values for a drug
+- Anything else you think might be informative or relevant (be creative!)
+- Then give a high-level summary to your work and findings.

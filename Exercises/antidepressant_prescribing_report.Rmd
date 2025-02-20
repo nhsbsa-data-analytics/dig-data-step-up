@@ -81,7 +81,7 @@ The analyses within this section will delve a bit deeper into antidepressant pre
 - Try to offer more granular insight into their effect on national prescribing trends
 - Percentage of total antidepressant volume or cost from a drug 
 - Mean cost per item in relation a drug
-- Distrubution of mean cost per item values for a drug
+- Distribution of mean cost per item values for a drug
 - Anything else you think might be informative or relevant (be creative!)
 - Then give a high-level summary to your work and findings.
 
