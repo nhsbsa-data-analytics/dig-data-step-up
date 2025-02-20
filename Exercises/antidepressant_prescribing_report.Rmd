@@ -49,6 +49,7 @@ These required content for Part One is:
    First, create a table showing the total annual antidepressant prescribing per region (items, pivot_wider).
    Second, create a table showing the annual antidepressant prescribing cost per region (pivot_wider). 
    Describe some regional changes and contrasts between 2021 and 2024.
+   (NOTE: within mutate a numerical column name, e.g. 2021 must be placed with ticks, so `2021`, for example *mutate(NEW_VAL = `2021` + `2022`)*)
    
 3. By now you may have noticed there are contrasts between antidepressant prescribing volumes and costs.
    Next, we will create two horizontal bar charts for comparison.
@@ -90,14 +91,38 @@ This means it can be converted into a html or pdf file, which you can then expor
 Click on the 'knit' icon at the top of the screen.
 If you click the arrow cursor, you can choose the format of the output.
 
-If you do *not* want code included within the report, then specify as below:
+If you do *not* want code included within the report, then specify *echo=FALSE* as below.
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 data %>% 
   group_by(YEAR) %>% 
   summarise(ITEMS = sum(ITEMS)) %>% 
   ungroup()
 ```
+
+If do not want code or output (for example if you are running a calculation for the purposes of the report) then specify *echo=FALSE* and *results="hide"* as below.
+
+```{r, echo=FALSE, results="hide"}
+# All drugs total volume
+data %>% 
+  summarise(ITEMS = sum(ITEMS))
+```
+
+In regards to cell block run options, if you add *warning=FALSE* this will prevent messages relating to the running of code being included in your html report output.
+
+```{r, echo=FALSE, warning=FALSE}
+data %>% 
+  group_by(YEAR) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup()
+```
+
+# Mardkwon Spacing
+
+The number fo lines between your text and code chunks will determine the physical spacing within your actual document.
+If you text and charts seem bunched up or too close to each other, try adding in additional blank lines.
+
+# Markdown Heading Structire
 
 Using '#', '##', an '###' can automatically structure your document into headings and sub-headings.
 If you are unsure about this, just use single '#' to denote each new section.  
@@ -113,3 +138,16 @@ ABC
 ### Heading 3
 
 ABC
+
+# Markdown Tables 
+
+The appearance of markdown tables can be improved using the 'knitr' package.
+
+```{r}
+install.packages('knitr')
+library(knitr)
+```
+
+If you have dome dplyr code that generates a tablee (or pivot table) just pipe (%>%) the *kable* at the end of your code. For example
+
+```{r}

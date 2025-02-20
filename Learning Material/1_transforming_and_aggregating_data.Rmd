@@ -396,8 +396,24 @@ data %>%
   pivot_wider(names_from = REGION, values_from = ITEMS)
 ```
 
-As we can see, we now have a table that is more reable and could be included within a report.
+As we can see, we now have a table that is more readable and could be included within a report.
 Tables in the 'tall format' are required for visualisation functions (like hchart) and not formatted to be readable.
+
+## Renaming Columns
+
+Finally, we can easily rename columns using the *rename* function. If you want your column name to have a space between multiple words you need to wrap the column name in tick marks like this *`My Column Name`*. Remember, we would need to specify the column name in tick marks if you were to use it within a different function as well.
+
+```{r}
+data %>% 
+  group_by(YEAR, REGION) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = REGION, values_from = ITEMS) %>% 
+  rename(
+    Year = YEAR,
+    `East of England` = `EAST OF ENGLAND`
+  )
+```
 
 ## Summary
 

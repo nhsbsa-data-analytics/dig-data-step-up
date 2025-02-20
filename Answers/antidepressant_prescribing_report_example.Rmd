@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
   html_document:
     toc: true 
+    toc_float: true
     toc_depth: 3  
     number_sections: true 
 ---
@@ -17,50 +18,45 @@ knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_r
 library(dplyr)
 library(highcharter)
 library(tidyr)
+library(knitr)
 
 data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 ```
 
+<br><br>
+
 # Introduction
+
+<br><br>
 
 This report will describe and analyse antidepressant prescribing, looking at volume and cost, both nationally and regionally. This report only looks at English prescribing data, aggregated monthly, from January 2021 until December 2024. 
 
 The report is split into three section, which are:
 
 - National and regional antidepressant prescribing summary
-- Understanding antidepressant prescribing cost trends
-- Impact of individual drugs on total antidepressant prescribing costs
+- Longitudinal antidepressant prescribing trends
+- Case study of individual drugs on antidepressant prescribing trends
 
-Together, the three section aim to generate a better understanding of the breakdown and drivers behind antidepressant prescribing trends. 
+Together, the three section aim to generate a better understanding of the breakdown and drivers behind antidepressant prescribing trends and costs.
 
-# National and regional antidepressant prescribing summary
+<br><br>
 
-Part One is a directed analysis and the same content needs to be covered by both streams.
-These required content for Part One is: 
+# National and Regional Antidepressant Prescribing Summary
 
-1. Create two vertical bar charts for comparison.
-   First, create a bar chart showing the total annual antidepressant prescribing  (items).
-   Second, create a bar chart that shows the total antidepressant prescribing cost.
-   Describe the trend of each chart and compare the charts against each other.
-   
-2. Create two tables for comparison.
-   First, create a table showing the total annual antidepressant prescribing per region (items, pivot_wider).
-   Second, create a table showing the annual antidepressant prescribing cost per region (pivot_wider). 
-   Describe some regional changes and contrasts between 2021 and 2024.
-   
-3. By now you may have noticed there are contrasts between antidepressant prescribing volumes and costs.
-   Next, we will create two horizontal bar charts for comparison.
-   First, create an ordered bar chart showing the 10 most prescribed antidepressants in the most recent year (items).
-   Second, create an ordered bar chart that shows antidepressants with the greatest total prescribing cost in the most recent year.
-   Highlight and describe any differences between the charts. 
-   
-Try and make text between sections flow, so the report reads well.
-The findings from part one may inform ho you approach part two.
+<br><br>
 
-```{r}
+## Annual Volume
+
+<br><br>
+
+The annual volume of antidepressant prescribing has increased from 82.3 million items in 2021 to 93.7 million items in 2024. There has been a year on year increase in antidepressant prescribing volumes, with around 11% more antidepressants prescribed in 2024 than in 2021.
+
+<br><br>
+
+```{r, echo=FALSE, warning=FALSE}
 data %>% 
   group_by(YEAR) %>% 
-  summarise(ITEMS = sum(ITEMS)) %>% 
+  summarise(ITEMS = round(sum(ITEMS), -3)) %>% 
   ungroup() %>% 
   hchart("column", hcaes(YEAR, ITEMS)) %>% 
   hc_yAxis(title = list(text = "Items")) %>% 
@@ -68,10 +64,27 @@ data %>%
   hc_title(text = "The annual number of antidepressant drugs prescribed in England from 2021 to 2024")
 ```
 
-```{r}
+<br><br>
+
+## Annual Cost
+
+<br><br>
+
+The annual cost of antidepressant prescribing decreased from £285 million in 2021 to £222 million pounds in 2022, which is over a 20% reduction in annual cost. The annual antidepressant prescribing cost between 2022 and 2024 remained relatively constant, between £222 million and £227 million pounds.
+
+The contrast between the gradually rising annual prescribing volumes and the fluctuating prescribing costs could potentially be explained by a few factors:
+
+- Varying prices at an item level for certain antidepressants drugs.
+- changes in antidepressant drug prescribing behaviour.
+
+We will explore these points later in the report.
+
+<br><br>
+
+```{r, echo=FALSE, warning=FALSE}
 data %>% 
   group_by(YEAR) %>% 
-  summarise(COST = sum(COST)) %>% 
+  summarise(COST = round(sum(COST), -3)) %>% 
   ungroup() %>% 
   hchart("column", hcaes(YEAR, COST)) %>% 
   hc_yAxis(title = list(text = "Cost (£)")) %>% 
@@ -79,27 +92,86 @@ data %>%
   hc_title(text = "The annual cost of antidepressant drugs prescribed in England from 2021 to 2024")
 ```
 
+<br><br>
 
-```{r}
+## Regional Annual Volumes
+
+<br><br>
+
+Nationally, the antidepressant prescribing volume increased around 10% between 2021 and 2024. There a greater variation in regional trends. Antidepressant prescribing volumes increased over 17% in London between 2021 and 2024, while only 7% in the South West.
+
+
+```{r, echo=FALSE, message=FALSE}
 data %>% 
   group_by(YEAR, REGION) %>% 
   summarise(ITEMS = sum(ITEMS)) %>% 
   ungroup() %>% 
-  pivot_wider(names_from = YEAR, values_from = ITEMS) 
+  pivot_wider(names_from = YEAR, values_from = ITEMS) %>% 
+  # Optional
+  mutate(PCT_INC = round(100 * (`2024` - `2021`) / `2021`, 1)) %>% 
+  rename(
+    Region = REGION,
+    `Percent Change` = PCT_INC
+  ) %>% 
+  kable()
 ```
 
-```{r}
+<br><br>
+
+## Regional Annual Cost
+
+<br><br>
+
+Nationally, the antidepressant prescribing cost dipped from 2021 to 2022, and then stabilised between 20222 and 2024. This pattern is also seen regionally. The North West annual antidepressant prescribing cost decreased over 25% over the 4 year time period. Once again, this could be down to either changes in prescribing behaviour and/or changes in drug prices.
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
 data %>% 
   group_by(YEAR, REGION) %>% 
   summarise(COST = sum(COST)) %>% 
   ungroup() %>% 
-  pivot_wider(names_from = YEAR, values_from = COST) 
+  pivot_wider(names_from = YEAR, values_from = COST) %>% 
+  # Optional
+  mutate(PCT_INC = round(100 * (`2024` - `2021`) / `2021`, 1)) %>% 
+  rename(
+    Region = REGION,
+    `Percent Change` = PCT_INC
+  ) %>% 
+  kable()
 ```
 
+<br><br>
 
-```{r}
+## Most Prescibed Antidepressants 
+
+<br><br>
+
+Across the four year period, sertraline hydlochroide was the by far the most prescribed antidepressants. The top four most prescribed antidepressants accounted for around 73% of the total antidepressant prescribing over the entire four year period.
+
+<br><br>
+
+```{r, echo=FALSE, results="hide"}
+# NOT INCLUDED IN REPORT, USED TO CALCULATE FIGURES TO BE INCLUDED WITHIN THE REPORT
+
+# Top 4 drugs total volume
+top4 = data %>% 
+  group_by(DRUG) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  top_n(4, ITEMS) %>% 
+  summarise(ITEMS = sum(ITEMS))
+
+# All drugs total volume
+total = data %>% 
+  summarise(ITEMS = sum(ITEMS))
+
+# % top 4 drug total volume
+print(100 * total / top4)
+```
+
+```{r, echo=FALSE}
 data %>% 
-  filter(YEAR == 2024) %>% 
   group_by(DRUG) %>% 
   summarise(ITEMS = sum(ITEMS)) %>% 
   ungroup() %>% 
@@ -108,12 +180,42 @@ data %>%
   hchart("bar", hcaes(DRUG, ITEMS)) %>% 
   hc_yAxis(title = list(text = "Items")) %>% 
   hc_xAxis(title = list(text = "Antidepressant drug name")) %>% 
-  hc_title(text = "The ten most prescribed antidepressant drugs prescribed in England in 2024")
+  hc_title(text = "The ten most prescribed antidepressant drugs prescribed in England from 2021 to 2024")
 ```
 
-```{r}
+```{r, echo=FALSE, results="hide"}
+# NOT INCLUDED IN REPORT, USED TO CALCULATE FIGURES TO BE INCLUDED WITHIN THE REPORT
+
+# Top 4 drugs total volume
+top4 = data %>% 
+  group_by(DRUG) %>% 
+  summarise(COST = sum(COST)) %>% 
+  ungroup() %>% 
+  top_n(2, COST) %>% 
+  summarise(COST = sum(COST))
+
+# All drugs total volume
+total = data %>% 
+  summarise(COST = sum(COST))
+
+# % top 4 drug total volume
+top4 / total
+```
+
+<br><br>
+
+## Antidepressants with the Greatest Prescribing Cost
+
+<br><br>
+
+Across the four year period, sertraline hydlochroide wand venlafaxine were the drugs with the greatest prescribing cost across the four year period. Amitriptyline was the antidepressant with the greatest total prescribing cost behind these, a considerable amount behind venlafaxine. 
+
+Venlafaxine is a notable drug as it is accounted for the 2nd greatest cost, yet was only the 6th most prescribed item. Sertraline hydrochloride is a significant antidepressant, as it accounted for the greatest volume and cost over the four year period.
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
 data %>% 
-  filter(YEAR == 2024) %>% 
   group_by(DRUG) %>% 
   summarise(COST = sum(COST)) %>% 
   ungroup() %>% 
@@ -125,92 +227,182 @@ data %>%
   hc_title(text = "The ten antidepressant drugs with the greatest total prescription cost in England in 2024")
 ```
 
+<br><br>
 
-# Part Two
+# Longitudinal Antidepressant Prescribing Trends
 
-Now you have a good understanding around national longitudinal antidepressant prescribing volume and cost trends.
-You will be given various topics or points to explore, and you will decide what approach or charts best does this.
-To supplement the initial analysis, you will now:
+<br><br>
 
-- First, look at the monthly cost of antidepressant prescribing per BNF Paragraph, for the most recent year.
-- Then, explore the data and find the antidepressant drugs that are driving the monthly cost trends.
-- Then give a high-level summary to your work and findings.
+## Longitudinal Antidepressant Prescribing Volumes
 
-```{r}
+<br><br>
+
+In-line with the year on year annual increase in antidepressant prescribing, the monthly trend shows a general increase over the four year period. There are some monthly spikes in prescribing volumes. These spikes could be seasonal, or could equally be down to localised prescription requirements.
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
 data %>% 
-  group_by(YM, BNF_PARAGRAPH) %>% 
-  summarise(COST = round(sum(COST))) %>% 
+  group_by(YM) %>% 
+  summarise(ITEMS = round(sum(ITEMS))) %>% 
   ungroup() %>% 
-  hchart("line", hcaes(YM, COST, group = BNF_PARAGRAPH)) %>% 
-  hc_yAxis(title = list(text = "Cost (£)")) %>% 
+  hchart("line", hcaes(YM, ITEMS)) %>% 
+  hc_yAxis(min = 0, title = list(text = "Items")) %>% 
   hc_xAxis(title = list(text = "Year-month")) %>% 
-  hc_title(text = "The monthly cost of antidepressant prescribing by BNF paragraph from January 2021 until December 2024")
+  hc_title(text = "The number of antidepressants prescribed in England per month from January 2021 until December 2024")
 ```
 
-```{r}
+<br><br>
+
+Looking at a selection of antidepressant drugs, it can be seen that sertraline hydlochloride has both been prescribed the most and also displayed the greatest increase in prescribing, out of these four drugs. It can be seen as an important drug within the context of antidepressant prescribing in England. 
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
+data %>% 
+  filter(DRUG == "Sertraline hydrochloride" | 
+           DRUG == "Amitriptyline hydrochloride" |
+           DRUG == "Citalopram hydrobromide" |
+           DRUG == "Mirtazapine") %>% 
+  group_by(YM, DRUG) %>% 
+  summarise(ITEMS = round(sum(ITEMS))) %>% 
+  ungroup() %>% 
+  hchart("line", hcaes(YM, ITEMS, group = DRUG)) %>% 
+  hc_yAxis(title = list(text = "Items")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly sertraline hydrochloride, amitriptyline hydrochloride, citalopram hydrobromide and mirtazapine prescribing in England from January 2021 until December 2024")
+```
+
+<br><br>
+
+## Longitudinal Antidepressant Prescribing Costs
+
+<br><br>
+
+A longitudinal analysis of national antidepressant prescribing costs per months shows a spike in total prescribing costs at the start of 2021, which then decreases until mid 2022. There are additional spikes in prescribing cost in July 2022 and July 2024. 
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
+data %>% 
+  group_by(YM) %>% 
+  summarise(COST = round(sum(COST))) %>% 
+  ungroup() %>% 
+  hchart("line", hcaes(YM, COST)) %>% 
+  hc_yAxis(min = 0, title = list(text = "Cost (£)")) %>% 
+  hc_xAxis(title = list(text = "Year-month")) %>% 
+  hc_title(text = "The monthly antidepressant prescribing in England from January 2021 until December 2024")
+```
+
+<br><br>
+
+Looking at the four antidepressants with the greatest total prescribing cost over the four year period,
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
 data %>% 
   filter(DRUG == "Sertraline hydrochloride" | 
            DRUG == "Duloxetine hydrochloride" |
-           DRUG == "Citalopram hydrobromide") %>% 
+           DRUG == "Citalopram hydrobromide" |
+           DRUG == "Venlafaxine") %>% 
   group_by(YM, DRUG) %>% 
-  summarise(COST = sum(COST)) %>% 
+  summarise(COST = round(sum(COST))) %>% 
   ungroup() %>% 
   hchart("line", hcaes(YM, COST, group = DRUG)) %>% 
-  hc_yAxis(title = list(text = "Items")) %>% 
+  hc_yAxis(title = list(text = "Cost (£)")) %>% 
   hc_xAxis(title = list(text = "Year-month")) %>% 
-  hc_title(text = "The monthly cost of sertraline hydrochloride, duloxetine hydrochloride and citalopram hydrobromide from January 2021 until December 2024")
+  hc_title(text = "The monthly sertraline hydrochloride, duloxetine hydrochloride, citalopram hydrobromide and venlafaxine prescribing costs in England from January 2021 until December 2024")
 ```
 
-# Part Two Extension
+<br><br>
 
-The extension is only to be attempted if you completed the data_metrics_and_insights learning material and exercises. 
-The analyses within this section will delve a bit deeper into antidepressant prescribing costs.
+It can be see that the cost of sertraline hydrochloride prescribing in early 2021 is what was driving the 2021 antidepressant prescribing cost to be higher than all subsequent years. The other three antidepressants with the greatest total prescribing cost did fluctuate to this extent. 
 
-- First calculate the average cost per item, per BNF paragraph (4), within the BNF antidepressant section, across the whole time frame.
-- Then select one or two drugs with a notable monetary impact, and calculate what their monthly cost amounts to, out of all monthly prescribing costs.
-- The above may have to be displayed as two charts.
-- Then give a high-level summary to your work and findings.
+However, some of the apparent seasonality and spikes in the national prescribing trend, can now be allocated to certain individual drugs. For exmaple, there was a spike in citalopram hydrobromide prescribing in July 2022 and a spike in sertraline hydlochloride prescribing in July 2024.
 
-```{r}
+Interestingly, by the end of the time period in December 2024, venlafaxine has the same monthly prescribing cost as sertraline hydlochloride, despite being prescribed less frequently.
+
+<br><br>
+
+# Case Study of Individual Drugs and their Impact on Antidepressant Prescribing Trends
+
+<br><br>
+
+This case study will focus on the two antidepressants that accounted for the greatest total antidepressant prescribing cost over the four year time period, sertraline hydlochloride and venlafaxine.
+
+<br><br>
+
+## Monthly Cost per Item
+
+<br><br>
+
+Looking at the (mean) cost per item per month for each drug, it can be seen that the cost of sertraline per region has decreased after that early 2021 spike, and now stabilised at around £2 per item. By contrast, the (mean) cost per item per month for vanlafaxine has fluctuated a great deal, ending up at nearly £8 per item at the end of 2024, nearly four times that of sertraline. These mean monthly item costs had an affect on national monthly prescribing costs. 
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
 data %>% 
-  filter(YEAR == 2024) %>% 
-  group_by(BNF_PARAGRAPH) %>% 
+  filter(DRUG == "Sertraline hydrochloride" | DRUG == "Venlafaxine") %>% 
+  group_by(YM, DRUG) %>% 
   summarise(
     ITEMS = sum(ITEMS),
     COST = sum(COST)
     ) %>% 
   ungroup() %>%
   mutate(ITEM_COST = round(COST / ITEMS, 2)) %>% 
-  hchart("bar", hcaes(BNF_PARAGRAPH, ITEM_COST)) %>% 
+  hchart("line", hcaes(YM, ITEM_COST, group = DRUG)) %>% 
   hc_yAxis(title = list(text = "Mean cost per item (£)")) %>% 
   hc_xAxis(title = list(text = "BNF paragraph (within antidepressant BNF section)")) %>% 
   hc_title(text = "The 2024 mean item cost of drugs from the four BNF paragraphs within the antidepressant drugs BNF section")
 ```
 
+<br><br>
+
+Some basic statistical analysis can confirm what can be seen from the above chart:
 
 
+- Sertraline hydlochrodide had a greater mean monthly item cost value range
+- Sertraline hydlochrodide had a far lower median monthly item cost value
+- Venlafaxine was consistently a more expensive antidepressant
+- The minimum mean monthly item cost of venlafaxine was more than the sertraline hydlochloride upper quartile value 
 
+<br><br>
 
-```{r}
+```{r, echo=FALSE,  message=FALSE, warning=FALSE}
 data %>% 
-  mutate(DRUG = ifelse(DRUG == "Sertraline hydrochloride", COST, 0)) %>% 
-  group_by(YM) %>% 
+  filter(DRUG == "Sertraline hydrochloride" | DRUG == "Venlafaxine") %>% 
+  group_by(YM, DRUG) %>% 
   summarise(
-    COST = sum(COST),
-    DRUG = sum(DRUG)
+    ITEMS = sum(ITEMS),
+    COST = sum(COST)
     ) %>% 
-  ungroup() %>% 
-  mutate(
-    PROP = round(100 * DRUG / COST, 1)
-    ) %>% 
-  hchart("line", hcaes(YM, PROP)) %>% 
-  hc_yAxis(min = 0, title = list(text = "Percentage of monthly antidepressant drug prescribing cost (%)")) %>% 
-  hc_xAxis(title = list(text = "Year-month")) %>% 
-  hc_title(text = "The percentage of monthly antidepressant drug prescribing costs from sertraline hydlochloride, from January 2021 until Decemeber 2024")
+  ungroup() %>%
+  mutate(ITEM_COST = round(COST / ITEMS, 2)) %>% 
+  group_by(DRUG) %>% 
+  summarise(
+    Min = min(ITEM_COST),
+    `Lower quartile` = quantile(ITEM_COST, 0.25),
+    Median = median(ITEM_COST),
+    `Upper quartile` = quantile(ITEM_COST, 0.75),
+    Max = max(ITEM_COST),
+    Range = max(ITEM_COST) - min(ITEM_COST)
+  ) %>% 
+  rename(Drug = DRUG) %>% 
+  kable()
 ```
 
+<br><br>
 
-```{r}
+## Monthly Percentage of total Prescribing Cost from Venlafaxine
+
+<br><br>
+
+The venlafaxine prescribing volume has steadily increased, while it's cost has fluctuated whilst also displaying an overall increase over the four year period. The percentage of venlafaxine prescribing out of all antidepressant prescribing displays both of these trends. In December 2024 it accounted for nearly 22% of all antidepressant prescribing cost, compared with 10% in January 2021, which is a significant increase.
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
 data %>% 
   mutate(DRUG = ifelse(DRUG == "Venlafaxine", COST, 0)) %>% 
   group_by(YM) %>% 
@@ -221,9 +413,25 @@ data %>%
   ungroup() %>% 
   mutate(PROP = round(100 * DRUG / COST, 1)) %>% 
   hchart("line", hcaes(YM, PROP)) %>% 
-  hc_yAxis(min = 0) %>% 
-  hc_yAxis(min = 0, title = list(text = "Percentage of monthly antidepressant drug prescribing cost (%)")) %>% 
+  hc_yAxis(title = list(text = "Percentage of monthly antidepressant drug prescribing cost (%)")) %>% 
   hc_xAxis(title = list(text = "Year-month")) %>% 
   hc_title(text = "The percentage of monthly antidepressant drug prescribing costs from venlafaxine, from January 2021 until Decemeber 2024")
 ```
 
+<br><br>
+
+# Summary
+
+<br><br>
+
+Some of the main points from the report are now summarised:
+
+- Annual prescribing of antidepressants in England has increased year on year.
+- The monthly prescribing of antidepressants in England has shown a gradual upward trend, with spikes due to monthly increases in particular drugs, such as citalopram hydrobromide.
+- The annnual cost antidepressant prescribing fluctuated, peaking in 2021 within the four year period.
+- The cost of sertraline hydlochloride prescribing in early 2021 was the main contributing factor behind this. 
+- There was a contrast between high volume prescribing and antidepressants with a high prescribing cost.
+- Venlafaxine was the prime exmaple of this, which only displayed a small increase in prescribing volume, yet a large increase in total prescribing cost.
+- The mean cost per item is animportant metric to consider when assessing both prescribing volume and cost. 
+
+<br><br>
