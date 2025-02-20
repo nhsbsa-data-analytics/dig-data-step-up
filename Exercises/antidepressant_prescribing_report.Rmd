@@ -1,15 +1,20 @@
 ---
-title: 'Longitudinal Analysis of Antidepressant Prescribing Volume and Cost'
+title: 'Longitudinal Analysis of Antidepressant Prescribing'
 author: "YOUR NAME HERE"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
   html_document:
     toc: true 
+    toc_float: true
     toc_depth: 3  
     number_sections: true 
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r setup, include=FALSE, eval=TRUE}
+if (!requireNamespace("knitr", quietly = TRUE)) {install.packages("knitr")}
 knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
 ```
 
@@ -17,10 +22,10 @@ knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_r
 library(dplyr)
 library(highcharter)
 library(tidyr)
+library(knitr)
 
 data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 ```
-
 
 # Task
 
@@ -30,36 +35,33 @@ The title of this report is 'Longitudinal Analysis of Antidepressant Prescribing
 Longitudinal just means the analysis is over an extended period of time, which we have with 4 years of monthly data.
 The report is to be split into two sections:
 
-Part One: To set the context for the report, this will be overall national and regional figures 
-Part Two: The will be followed-up by a more exploratory analysis that delves into antidepressant prescribing cost trends.
+Part One: To set the context for the report, this will be overall national and regional figures Part Two: The will be followed-up by a more exploratory analysis that delves into antidepressant prescribing cost trends.
 Part Two Extension: Those attempting the extension task can then look at creating standardised metrics to understand more specific prescribing patterns.
-
 
 # Part One
 
 Part One is a directed analysis and the same content needs to be covered by both streams.
-These required content for Part One is: 
+These required content for Part One is:
 
-1. Create two vertical bar charts for comparison.
-   First, create a bar chart showing the total annual antidepressant prescribing  (items).
-   Second, create a bar chart that shows the total antidepressant prescribing cost.
-   Describe the trend of each chart and compare the charts against each other.
-   
-2. Create two tables for comparison.
-   First, create a table showing the total annual antidepressant prescribing per region (items, pivot_wider).
-   Second, create a table showing the annual antidepressant prescribing cost per region (pivot_wider). 
-   Describe some regional changes and contrasts between 2021 and 2024.
-   (NOTE: within mutate a numerical column name, e.g. 2021 must be placed with ticks, so `2021`, for example *mutate(NEW_VAL = `2021` + `2022`)*)
-   
-3. By now you may have noticed there are contrasts between antidepressant prescribing volumes and costs.
-   Next, we will create two horizontal bar charts for comparison.
-   First, create an ordered bar chart showing the 10 most prescribed antidepressants in the most recent year (items).
-   Second, create an ordered bar chart that shows antidepressants with the greatest total prescribing cost in the most recent year.
-   Highlight and describe any differences between the charts. 
-   
+1.  Create two vertical bar charts for comparison.
+    First, create a bar chart showing the total annual antidepressant prescribing (items).
+    Second, create a bar chart that shows the total antidepressant prescribing cost.
+    Describe the trend of each chart and compare the charts against each other.
+
+2.  Create two tables for comparison.
+    First, create a table showing the total annual antidepressant prescribing per region (items, pivot_wider).
+    Second, create a table showing the annual antidepressant prescribing cost per region (pivot_wider).
+    Describe some regional changes and contrasts between 2021 and 2024.
+    (NOTE: within mutate a numerical column name, e.g. 2021 must be placed with ticks, so `2021`, for example *mutate(NEW_VAL = `2021` + `2022`)*)
+
+3.  By now you may have noticed there are contrasts between antidepressant prescribing volumes and costs.
+    Next, we will create two horizontal bar charts for comparison.
+    First, create an ordered bar chart showing the 10 most prescribed antidepressants across the four years (items).
+    Second, create an ordered bar chart that shows antidepressants with the greatest total prescribing cost across the entire four year period..
+    Highlight and describe any differences between the charts.
+
 Try and make text between sections flow, so the report reads well.
 The findings from part one may inform ho you approach part two.
-
 
 # Part Two (Longitudinal Analysis)
 
@@ -67,24 +69,22 @@ Now you have a good understanding around national and regional antidepressant pr
 You will be given various topics or points to explore, and you will decide what approach or charts best does this.
 To supplement the initial analysis, you will now:
 
-- Look at the longitudinal (monthly) trend for all antidepressant items and for the cost of antidepressant prescribing
-- Then, explore the data and find the antidepressant drugs that are driving these monthly item and cost trends.
-- Then give a high-level summary to your work and findings.
-
+-   Look at the longitudinal (monthly) trend for all antidepressant items and for the cost of antidepressant prescribing
+-   Then, explore the data and find the antidepressant drugs that are driving these monthly item and cost trends.
+-   Then give a high-level summary to your work and findings.
 
 # Part Two Extension (Antidepressant Case studies)
 
-The extension is only to be attempted if you completed the data_metrics_and_insights learning material and exercises. 
+The extension is only to be attempted if you completed the data_metrics_and_insights learning material and exercises.
 The analyses within this section will delve a bit deeper into antidepressant prescribing costs.
 
-- Focus one one or more antidepressants that play a significant role in national volume and cost trends.
-- Try to offer more granular insight into their effect on national prescribing trends
-- Percentage of total antidepressant volume or cost from a drug 
-- Mean cost per item in relation a drug
-- Distribution of mean cost per item values for a drug
-- Anything else you think might be informative or relevant (be creative!)
-- Then give a high-level summary to your work and findings.
-
+-   Focus one one or more antidepressants that play a significant role in national volume and cost trends.
+-   Try to offer more granular insight into their effect on national prescribing trends
+-   Percentage of total antidepressant volume or cost from a drug
+-   Mean cost per item in relation a drug
+-   Distribution of mean cost per item values for a drug
+-   Anything else you think might be informative or relevant (be creative!)
+-   Then give a high-level summary to your work and findings.
 
 # 'Knit' Markdown
 
@@ -110,24 +110,24 @@ data %>%
   summarise(ITEMS = sum(ITEMS))
 ```
 
-In regards to cell block run options, if you add *warning=FALSE* this will prevent messages relating to the running of code being included in your html report output.
+In regards to cell block run options, if you add *message=FALSE* this will prevent messages relating to the running of code being included in your html report output.
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE}
 data %>% 
   group_by(YEAR) %>% 
   summarise(ITEMS = sum(ITEMS)) %>% 
   ungroup()
 ```
 
-# Mardkwon Spacing
+# Markdwon Spacing
 
 The number fo lines between your text and code chunks will determine the physical spacing within your actual document.
 If you text and charts seem bunched up or too close to each other, try adding in additional blank lines.
 
 # Markdown Heading Structire
 
-Using '#', '##', an '###' can automatically structure your document into headings and sub-headings.
-If you are unsure about this, just use single '#' to denote each new section.  
+Using '\#', '\##', an '\###' can automatically structure your document into headings and sub-headings.
+If you are unsure about this, just use single '\#' to denote each new section.
 
 # Heading 1
 
@@ -141,15 +141,58 @@ ABC
 
 ABC
 
-# Markdown Tables 
+# Markdown Tables
 
 The appearance of markdown tables can be improved using the 'knitr' package.
+If you have dome dplyr code that generates a tablee (or pivot table) just pipe (%\>%) the *kable* at the end of your code.
+For example
 
-```{r}
-install.packages('knitr')
-library(knitr)
+------------------------------------------------------------------------
+
+# EXAMPL CODE AND TEXT
+
+<br><br>
+
+# INTRODUCTION
+
+<br><br>
+
+HERE IS MY REPORT.
+
+<br><br>
+
+## ANALYSIS ONE
+
+HERE IS A CHART
+
+```{r, echo=FALSE, message=FALSE}
+data %>% 
+  group_by(YEAR) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  hchart("column", hcaes(YEAR, ITEMS))
 ```
 
-If you have dome dplyr code that generates a tablee (or pivot table) just pipe (%>%) the *kable* at the end of your code. For example
+<br><br>
+
+HERE IS A TABLE
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE}
+data %>% 
+  group_by(YEAR, REGION) %>% 
+  summarise(ITEMS = sum(ITEMS)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = REGION, values_from = ITEMS) %>% 
+  kable()
+```
+
+ABC
 
 ```{r}
+nrow(data)
+
+```
+
+ABC

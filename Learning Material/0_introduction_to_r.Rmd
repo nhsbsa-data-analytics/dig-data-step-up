@@ -6,8 +6,9 @@ output: html_document
 ---
 
 ```{r setup, echo=TRUE, eval=TRUE}
+if (!requireNamespace("rmarkdown", quietly = TRUE)) {install.packages("rmarkdown")}
 if (!requireNamespace("rprojroot", quietly = TRUE)) {install.packages("rprojroot")}
-knitr::opts_knit$set(root.dir = find_root(criterion = is_rstudio_project))
+knitr::opts_knit$set(root.dir = rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
 ```
 
 # Introduction
