@@ -104,7 +104,7 @@ extension_df = epd %>%
     REGION = REGIONAL_OFFICE_NAME,
     BNF_CHAPTER = BNF_CHAPTER_PLUS_CODE,
     BNF_SECTION = SECTION_DESCR,
-    BNF_PARAGRAPH = PARAGRAPH_DESCR,
+    #BNF_PARAGRAPH = PARAGRAPH_DESCR,
     DRUG = CHEMICAL_SUBSTANCE_BNF_DESCR,
     ITEMS = ITEMS,
     COST = NIC
@@ -115,7 +115,7 @@ extension_df = epd %>%
 # Standard data
 standard_df = extension_df %>% 
   filter(BNF_SECTION == "Antidepressant drugs") %>% 
-  select(-BNF_CHAPTER)
+  select(-BNF_CHAPTER, -BNF_SECTION)
 
 # Save Data
 saveRDS(standard_df, "Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")

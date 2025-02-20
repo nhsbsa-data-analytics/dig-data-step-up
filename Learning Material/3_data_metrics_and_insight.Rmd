@@ -54,12 +54,11 @@ The BNF is structured hierarchically into Chapters, Sections and Chemical Substa
 For example:
 
 - Amitriptyline hydrochloride is an actual antidepressant *DRUG*
-- Amitriptyline hydrochloride is one of many *DRUG* within the 'Selective serotonin re-uptake inhibitors' *BNF_PARAGRAPH*.
-- Selective serotonin re-uptake inhibitors is one of many *BNF_PARAGRAPH* within the 'Antidepressant drugs' *BNF_SECTION*
+- Amitriptyline hydrochloride is one of many *DRUG* within the 'Antidepressant drugs' *BNF_SECTION*
 - Antidepressant drugs is one of many *BNF_SECTION* within the '04: Central Nervous System' *BNF_CHAPTER*
 - And there are 23 *BNF_CHAPTER* (although very little prescribing stems from some of the chapters)
 
-In summary, BNF chapters are split into sections, which are then split into paragraphs, and which are then split into actual drugs (i.e. a hierarchy).
+In summary, BNF chapters are split into sections, which are then split into actual drugs (i.e. a hierarchy).
 
 ## Exploratory Data Analysis (EDA)
 
