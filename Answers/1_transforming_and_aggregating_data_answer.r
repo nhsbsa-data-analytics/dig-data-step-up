@@ -20,7 +20,7 @@ data %>%
   arrange(desc(ITEMS))
 
 # Question 2: Calculate the monthly national cost of Mirtazapine prescribing 
-data %>% 
+a = data %>% 
   filter(DRUG == "Mirtazapine") %>% 
   group_by(YM) %>% 
   summarise(COST = sum(COST)) %>% 
@@ -33,10 +33,10 @@ data %>%
   summarise(COST = sum(COST)) %>% 
   ungroup()
 
-# Question 4: Create a (pivoted) table that showsthe cost of anti-depressant prescribing per region per year?
+# Question 4: Create a (pivoted) table that shows the cost of anti-depressant prescribing per region per year?
 # Note: Each row should be a year and each column should be a region.
 data %>% 
   group_by(YEAR, REGION) %>% 
   summarise(COST = sum(COST)) %>% 
   ungroup() %>% 
-  pivot_wider(names_from = YEAR, values_from = COST)
+  pivot_wider(names_from = REGION, values_from = COST)

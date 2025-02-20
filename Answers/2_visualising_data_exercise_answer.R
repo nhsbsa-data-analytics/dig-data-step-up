@@ -1,7 +1,10 @@
 
 # Visualising Data Exercises
 
-# NOTE: all chart axes must be labelled and have an appropriatee title
+# NOTE: all chart axes must be labelled and have an appropriate title
+
+# Set directory
+setwd(rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
 
 # Load Data
 data = readRDS("Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
@@ -18,14 +21,14 @@ df_bar = data %>%
   group_by(DRUG) %>% 
   summarise(ITEMS = sum(ITEMS)) %>% 
   ungroup() %>% 
-  top_n(10, ITEMS) %>% 
+  top_n(5, ITEMS) %>% 
   arrange(ITEMS)
 
 # Chart
 hchart(df_bar, "bar", hcaes(DRUG, ITEMS)) %>% 
   hc_yAxis(title = list(text = "Total number of items")) %>% 
   hc_xAxis(title = list(text = "Drug name")) %>% 
-  hc_title(text = "The top 10 nationally prescribed antidepressants in 2024")
+  hc_title(text = "The top 5 nationally prescribed antidepressants in 2024")
   
 # Question 2: Create a vertical bar chart showing the total annual cost of Sertraline hydrochloride prescribing in the NORTH EAST region.
 

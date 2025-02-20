@@ -1,5 +1,8 @@
 # Data Metrics and Insight Exercises
 
+# Set directory
+setwd(rprojroot::find_root(criterion = rprojroot::is_rstudio_project))
+
 # Load Data
 data = readRDS("Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 
