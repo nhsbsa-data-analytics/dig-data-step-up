@@ -62,11 +62,11 @@ data %>%
   hchart("column", hcaes(YEAR, COST)) %>% 
   hc_yAxis(title = list(text = "Mean monthly prescribing cost (£)")) %>% 
   hc_xAxis(title = list(text = "Year")) %>% 
-  hc_title(text = "The national mean monthlyprescribing cost across all prescribing, from 2021 to 2024")
+  hc_title(text = "The national mean monthly prescribing cost across all prescribing, from 2021 to 2024")
 
 # Question 5: Create a monthly line chart, which shows what percentage of *national* prescribing is from the '02: Cardiovascular System' BNF_CHAPTER.
 data %>% 
-  mutate(CARDIO_COST = ifelse(BNF_CHAPTER == "21: Appliances", COST, 0)) %>% 
+  mutate(CARDIO_COST = ifelse(BNF_CHAPTER == "02: Cardiovascular System", COST, 0)) %>% 
   group_by(YM) %>% 
   summarise(
     COST = sum(COST),
@@ -77,4 +77,4 @@ data %>%
   hchart("line", hcaes(YM, CARDIO_PCT)) %>% 
   hc_yAxis(min = 0, title = list(text = "Percentage of prescribing (%)")) %>% 
   hc_xAxis(title = list(text = "Year-month")) %>% 
-  hc_title(text = "The percentage of prescribing from the Cardiovascular System BNF Chapter out of all prescribing, in England from January 2021 to December 2024")
+  hc_title(text = "The percentage of prescribing cost from the Cardiovascular System BNF Chapter out of all prescribing cost, in England from January 2021 to December 2024")
