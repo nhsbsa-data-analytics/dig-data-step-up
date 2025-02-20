@@ -52,6 +52,7 @@ Functions:
 - arrange()
 - top_n()
 - pivot_wider()
+- rename()
 
 Content:
 
@@ -101,11 +102,6 @@ Question 2: Create a vertical bar chart showing the total annual cost of sertral
 Question 3: Create a line chart of the nationally monthly cost (rounded to the nearest pound) of escitalopram.
 
 
-REPORT ONE: Data Reporting
-
-
-Part Two:  
-
 3. Data Metrics and Insight
 
 Functions:
@@ -139,7 +135,9 @@ Question 4: calculate the annual *mean* monthly total national prescribing cost 
 Question 5: Create a monthly line chart, which shows what percentage of *national* prescribing is from the '02: Cardiovascular System' BNF_CHAPTER.  
 
 
-REPORT TWO: Data Insight
+REPORT: Data Reporting (Q1 & Q2) or Data Insight (Q1, Q2 & Q3)
+
+
 
 
 
