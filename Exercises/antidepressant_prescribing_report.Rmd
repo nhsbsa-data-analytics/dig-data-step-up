@@ -119,7 +119,7 @@ data %>%
   ungroup()
 ```
 
-# Markdwon Spacing
+# Markdown Spacing
 
 The number fo lines between your text and code chunks will determine the physical spacing within your actual document.
 If you text and charts seem bunched up or too close to each other, try adding in additional blank lines.
@@ -149,7 +149,7 @@ For example
 
 ------------------------------------------------------------------------
 
-# EXAMPL CODE AND TEXT
+# EXAMPLE CODE AND TEXT
 
 <br><br>
 
