@@ -8,7 +8,8 @@ if(!'pacman' %in% rownames(installed.packages())){
 pacman::p_load(
   'dplyr',
   'jsonlite',
-  'rprojroot'
+  'rprojroot',
+  'readr'
   )
 
 # Set directory to project root
@@ -104,13 +105,12 @@ extension_df = epd %>%
     REGION = REGIONAL_OFFICE_NAME,
     BNF_CHAPTER = BNF_CHAPTER_PLUS_CODE,
     BNF_SECTION = SECTION_DESCR,
-    #BNF_PARAGRAPH = PARAGRAPH_DESCR,
     DRUG = CHEMICAL_SUBSTANCE_BNF_DESCR,
     ITEMS = ITEMS,
     COST = NIC
   ) %>% 
   filter(REGION != "UNIDENTIFIED") %>% 
-  arrange(BNF_SECTION, BNF_SECTION, BNF_PARAGRAPH, DRUG, REGION, YM)
+  arrange(BNF_SECTION, BNF_SECTION, DRUG, REGION, YM)
 
 # Standard data
 standard_df = extension_df %>% 
@@ -120,6 +120,10 @@ standard_df = extension_df %>%
 # Save Data
 saveRDS(standard_df, "Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
 saveRDS(extension_df, "Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.Rds")
+
+# Save Data as csv
+write_csv(standard_df, "Data/STEP_UP_REGIONAL_ANTIDEPRESSANTS.csv")
+write_csv(extension_df, "Data/EXTENSION_STEP_UP_REGIONAL_ANTIDEPRESSANTS.csv")
 
 # Clean
 rm(list = ls()); gc()
