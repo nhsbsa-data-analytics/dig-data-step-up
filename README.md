@@ -188,3 +188,36 @@ The analyses within this section will delve a bit deeper into antidepressant pre
 - Distribution of mean cost per item values for a drug
 - Anything else you think might be informative or relevant (be creative!)
 - Then give a high-level summary to your work and findings.
+
+# Order of Materials  
+
+Introduction
+
+1. Videos/posit_cloud_setup.mp4
+2. Learning Material/0_introduction_to_r.Rmd
+
+Aggregating Data
+
+3. Learning Material/1_and_aggregating_data.Rmd
+4. Exercises/1_transforming_and_aggregating_data_exercise.r
+5. Videos/1_transforming_and_aggregating_data_video.mp4
+
+Visualising Data  
+
+6. Learning Material/2_visualising_data.Rmd
+7. Exercises/2_visualising_data_exercise.R
+8. Videos/2_visualising_data_exercise_video.mp4
+
+Data Metrics  
+
+9. Learning Material/3_data_metrics_and_insight.Rmd
+10. Exercises/3_data_metrics_and_insight_exercise.R
+11. Videos/3_data_metrics_and_insight_video.mp4
+
+Final Report
+
+12. Videos/antidepressant_prescribing_report_setup.mp4
+13. Exercises/antidepressant_prescribing_report.Rmd
+
+After you complete the final report, you can be given the final video which reviews the final report.  
+
