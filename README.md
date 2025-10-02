@@ -219,5 +219,7 @@ Final Report
 12. Videos/antidepressant_prescribing_report_setup.mp4
 13. Exercises/antidepressant_prescribing_report.Rmd
 
-After you complete the final report, you can be given the final video which reviews the final report.  
+After you complete (or at least attempt) the final report, you can view the report evaluation videos.
+
+14. 
 
