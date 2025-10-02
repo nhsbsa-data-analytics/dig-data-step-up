@@ -2,7 +2,9 @@
 title: "Visualising Data"
 author: "Adnan Shroufi"
 date: "2025-02-11"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, echo=TRUE, eval=TRUE}
@@ -18,7 +20,7 @@ We will use an R package called *highcharter* to do this.
 We will first install this package using *install.packages*.
 
 ```{r}
-install.packages("highcharter")
+#install.packages("highcharter")
 ```
 
 Thee highcharter is free to use for students, and some public sector organisations.
@@ -53,7 +55,7 @@ We can create a huge number of charts with hchart just using 3 things:
 Here is an exmaple of the kind of charts you can create using hchart and very little code.
 
 ```{r}
-browseURL("https://jkunst.com/highcharter/articles/hchart.html")
+#browseURL("https://jkunst.com/highcharter/articles/hchart.html")
 ```
 
 ## Chart Types
