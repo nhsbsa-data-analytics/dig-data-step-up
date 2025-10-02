@@ -216,10 +216,11 @@ Data Metrics
 
 Final Report
 
-12. Videos/antidepressant_prescribing_report_setup.mp4
+12. Videos/4.1_antidepressant_prescribing_report_setup.mp4
 13. Exercises/antidepressant_prescribing_report.Rmd
 
 After you complete (or at least attempt) the final report, you can view the report evaluation videos.
 
-14. 
-
+14. Videos/4.2_antidepressant_prescribing_report_one.mp4
+15. Videos/4.3_antidepressant_prescribing_report_two.mp4
+16. Videos/4.4_antidepressant_prescribing_report_three.mp4
